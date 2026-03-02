@@ -1,79 +1,46 @@
 const express = require('express');
 const app = express();
-app.use(express.json()); // Allows the server to read data sent by Roblox
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-// This object will hold all active Roblox servers
-// Format: { "job-id-123": { lastSeen: timestamp, players: 5, shouldKick: false } }
-let activeServers = {};
+let sessionRegistry = {};
+const AUTH_TOKEN = process.env.API_KEY; // We still use your secret key
 
-const API_KEY = process.env.API_KEY;
+// Renamed for discretion: /v1/sync instead of /poll
+app.post('/v1/sync', (req, res) => {
+    const token = req.headers['x-api-token']; // Renamed header
+    if (token !== AUTH_TOKEN) return res.status(401).send();
 
-// Security Middleware
-const checkApiKey = (req, res, next) => {
-    const userKey = req.headers['x-api-key'];
-    if (userKey && userKey === API_KEY) {
-        next();
+    const { sid, pCount } = req.body; // Using short names to be discrete
+    if (!sid) return res.status(400).send();
+
+    if (!sessionRegistry[sid]) {
+        sessionRegistry[sid] = { active: true, terminate: false };
+    }
+
+    sessionRegistry[sid].lastUpdate = Date.now();
+    sessionRegistry[sid].players = pCount;
+
+    // "u" stands for update (true means kick)
+    res.json({ u: sessionRegistry[sid].terminate });
+});
+
+// Admin: List all sessions
+app.get('/admin/inspect', (req, res) => {
+    if (req.headers['x-api-token'] !== AUTH_TOKEN) return res.status(401).send();
+    res.json(sessionRegistry);
+});
+
+// Admin: Trigger "Update" (Kick)
+app.post('/admin/set-state', (req, res) => {
+    if (req.headers['x-api-token'] !== AUTH_TOKEN) return res.status(401).send();
+    const { sid, state } = req.body;
+    if (sessionRegistry[sid]) {
+        sessionRegistry[sid].terminate = state;
+        res.send("State updated.");
     } else {
-        res.status(401).send("Unauthorized");
-    }
-};
-
-// 1. ROBLOX CALLS THIS: "Registers" the server and checks if it should kick
-app.post('/poll', checkApiKey, (req, res) => {
-    // If jobId is empty (like in Studio), we name it "Studio-Debug"
-    let jobId = req.body.jobId;
-    if (!jobId || jobId === "") {
-        jobId = "Studio-Debug";
-    }
-
-    const playerCount = req.body.playerCount || 0;
-
-    // Create record if it's a new server
-    if (!activeServers[jobId]) {
-        activeServers[jobId] = { shouldKick: false };
-    }
-
-    // Update the server's info
-    activeServers[jobId].lastSeen = Date.now();
-    activeServers[jobId].playerCount = playerCount;
-
-    // Tell Roblox if it should kick everyone
-    res.json({ kick: activeServers[jobId].shouldKick });
-});
-
-// 2. ADMIN CALLS THIS: See all active Roblox servers
-app.get('/list-servers', checkApiKey, (req, res) => {
-    // Clean up "dead" servers (haven't messaged in 30 seconds)
-    const now = Date.now();
-    for (let id in activeServers) {
-        if (now - activeServers[id].lastSeen > 30000) {
-            delete activeServers[id];
-        }
-    }
-    res.json(activeServers);
-});
-
-// 3. ADMIN CALLS THIS: Trigger a kick for a SPECIFIC JobId
-app.post('/kick-server', checkApiKey, (req, res) => {
-    const { jobId } = req.body;
-    if (activeServers[jobId]) {
-        activeServers[jobId].shouldKick = true;
-        res.send(`Server ${jobId} marked for disconnection.`);
-    } else {
-        res.status(404).send("Server not found.");
+        res.status(404).send("Session not found.");
     }
 });
 
-// 4. ADMIN CALLS THIS: Reset a server so people can join again
-app.post('/reset-server', checkApiKey, (req, res) => {
-    const { jobId } = req.body;
-    if (activeServers[jobId]) {
-        activeServers[jobId].shouldKick = false;
-        res.send(`Server ${jobId} reset.`);
-    } else {
-        res.status(404).send("Server not found.");
-    }
-});
-
-app.listen(PORT, () => console.log("Server running..."));
+app.listen(PORT, () => console.log("System initialized."));
