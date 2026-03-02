@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roblox Game Control</title>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: white; padding: 20px; }
+        .server-card { background: #333; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 5px solid #00ff00; }
+        .server-card.kicked { border-left-color: #ff0000; opacity: 0.7; }
+        button { cursor: pointer; padding: 8px 15px; border: none; border-radius: 4px; font-weight: bold; }
+        .kick-btn { background: #ff4444; color: white; }
+        .reset-btn { background: #44ff44; color: black; }
+        .logs { background: #000; color: #00ff00; padding: 10px; height: 100px; overflow-y: scroll; font-family: monospace; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Roblox Instance Manager</h1>
+    <div id="auth">
+        <input type="password" id="key" placeholder="Enter API Key">
+        <button onclick="loadServers()">Login</button>
+    </div>
+    
+    <div id="server-list"></div>
+    <div class="logs" id="logs">System Ready...</div>
+
+    <script>
+        async function api(path, method = 'GET', body = null) {
+            const key = document.getElementById('key').value;
+            const res = await fetch(path, {
+                method: method,
+                headers: { 'x-api-key': key, 'Content-Type': 'application/json' },
+                body: body ? JSON.stringify(body) : null
+            });
+            if (res.status === 401) alert("Wrong API Key!");
+            return res;
+        }
+
+        async function loadServers() {
+            const res = await api('/list-servers');
+            if (!res.ok) return;
+            const servers = await res.json();
+            const container = document.getElementById('server-list');
+            container.innerHTML = '';
+
+            for (const [id, data] of Object.entries(servers)) {
+                const div = document.createElement('div');
+                div.className = `server-card ${data.shouldKick ? 'kicked' : ''}`;
+                div.innerHTML = `
+                    <strong>ID:</strong> ${id} <br>
+                    <strong>Players:</strong> ${data.playerCount} | 
+                    <strong>Status:</strong> ${data.shouldKick ? 'DISCONNECTING' : 'ACTIVE'} <br>
+                    <small>Flags: ${data.flags || 'None'}</small><br><br>
+                    <button class="kick-btn" onclick="action('kick-server', '${id}')">KICK SERVER</button>
+                    <button class="reset-btn" onclick="action('reset-server', '${id}')">ALLOW REJOIN</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        async function action(endpoint, jobId) {
+            await api('/' + endpoint, 'POST', { jobId });
+            document.getElementById('logs').innerHTML += `<br>Action ${endpoint} sent to ${jobId}`;
+            loadServers();
+        }
+
+        setInterval(loadServers, 5000); // Auto-refresh every 5 seconds
+    </script>
+</body>
+</html>
