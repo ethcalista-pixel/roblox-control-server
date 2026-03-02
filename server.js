@@ -21,11 +21,15 @@ const checkApiKey = (req, res, next) => {
 
 // 1. ROBLOX CALLS THIS: "Registers" the server and checks if it should kick
 app.post('/poll', checkApiKey, (req, res) => {
-    const { jobId, playerCount } = req.body;
+    // If jobId is empty (like in Studio), we name it "Studio-Debug"
+    let jobId = req.body.jobId;
+    if (!jobId || jobId === "") {
+        jobId = "Studio-Debug";
+    }
 
-    if (!jobId) return res.status(400).send("No JobId provided");
+    const playerCount = req.body.playerCount || 0;
 
-    // If we haven't seen this server before, create a record for it
+    // Create record if it's a new server
     if (!activeServers[jobId]) {
         activeServers[jobId] = { shouldKick: false };
     }
