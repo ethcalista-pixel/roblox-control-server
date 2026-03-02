@@ -1,41 +1,75 @@
 const express = require('express');
 const app = express();
+app.use(express.json()); // Allows the server to read data sent by Roblox
 const PORT = process.env.PORT || 3000;
 
-// This variable stores whether players should be kicked.
-// It resets to false when the server starts.
-let shouldDisconnect = false;
+// This object will hold all active Roblox servers
+// Format: { "job-id-123": { lastSeen: timestamp, players: 5, shouldKick: false } }
+let activeServers = {};
 
-// Middleware: This checks every request for your secret API Key
+const API_KEY = process.env.API_KEY;
+
+// Security Middleware
 const checkApiKey = (req, res, next) => {
     const userKey = req.headers['x-api-key'];
-    // It compares the header key to a secret we will set in Render
-    if (userKey && userKey === process.env.API_KEY) {
-        next(); // Key is correct, proceed!
+    if (userKey && userKey === API_KEY) {
+        next();
     } else {
-        res.status(401).send("Unauthorized: Invalid API Key");
+        res.status(401).send("Unauthorized");
     }
 };
 
-// ENDPOINT 1: Trigger the disconnect (You call this from a tool like Postman)
-app.post('/disconnect', checkApiKey, (req, res) => {
-    shouldDisconnect = true;
-    console.log("Disconnect signal RECEIVED.");
-    res.send("Signal sent: Roblox servers will now disconnect players.");
+// 1. ROBLOX CALLS THIS: "Registers" the server and checks if it should kick
+app.post('/poll', checkApiKey, (req, res) => {
+    const { jobId, playerCount } = req.body;
+
+    if (!jobId) return res.status(400).send("No JobId provided");
+
+    // If we haven't seen this server before, create a record for it
+    if (!activeServers[jobId]) {
+        activeServers[jobId] = { shouldKick: false };
+    }
+
+    // Update the server's info
+    activeServers[jobId].lastSeen = Date.now();
+    activeServers[jobId].playerCount = playerCount;
+
+    // Tell Roblox if it should kick everyone
+    res.json({ kick: activeServers[jobId].shouldKick });
 });
 
-// ENDPOINT 2: Reset the signal (Call this to allow players back in)
-app.post('/reset', checkApiKey, (req, res) => {
-    shouldDisconnect = false;
-    console.log("System RESET. Players can join again.");
-    res.send("System reset. Players will no longer be kicked.");
+// 2. ADMIN CALLS THIS: See all active Roblox servers
+app.get('/list-servers', checkApiKey, (req, res) => {
+    // Clean up "dead" servers (haven't messaged in 30 seconds)
+    const now = Date.now();
+    for (let id in activeServers) {
+        if (now - activeServers[id].lastSeen > 30000) {
+            delete activeServers[id];
+        }
+    }
+    res.json(activeServers);
 });
 
-// ENDPOINT 3: Check status (Roblox calls this every few seconds)
-app.get('/status', checkApiKey, (req, res) => {
-    res.json({ disconnect: shouldDisconnect });
+// 3. ADMIN CALLS THIS: Trigger a kick for a SPECIFIC JobId
+app.post('/kick-server', checkApiKey, (req, res) => {
+    const { jobId } = req.body;
+    if (activeServers[jobId]) {
+        activeServers[jobId].shouldKick = true;
+        res.send(`Server ${jobId} marked for disconnection.`);
+    } else {
+        res.status(404).send("Server not found.");
+    }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// 4. ADMIN CALLS THIS: Reset a server so people can join again
+app.post('/reset-server', checkApiKey, (req, res) => {
+    const { jobId } = req.body;
+    if (activeServers[jobId]) {
+        activeServers[jobId].shouldKick = false;
+        res.send(`Server ${jobId} reset.`);
+    } else {
+        res.status(404).send("Server not found.");
+    }
 });
+
+app.listen(PORT, () => console.log("Server running..."));
