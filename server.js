@@ -13,35 +13,36 @@ const API_KEY = process.env.API_KEY;
 // Serve the Dashboard
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-// 1. ROBLOX POLL & CHAT RECEIVER (With Deduplication)
+// 1. ROBLOX POLL & CHAT RECEIVER
 app.post(`/poll/${API_KEY}`, (req, res) => {
     let { jobId, playerCount, isStudio, packets } = req.body;
     
-    // Safety check: if no JobId, ignore the request
-    if (!jobId || jobId === "") return res.status(400).send("No JobId");
+    // If JobId is missing, ignore (prevents empty cards)
+    if (!jobId || jobId === "") return res.status(400).send("Missing JobId");
 
-    // DEDUPLICATION: Only create a new entry if it doesn't already exist
+    // DEDUPLICATION: If server exists, update it. If not, create it.
     if (!activeServers[jobId]) {
         activeServers[jobId] = { 
             shouldKick: false, 
             chats: [], 
-            isStudio, 
+            isStudio: isStudio || false, 
             startTime: new Date().toLocaleString() 
         };
     }
 
-    // Update heartbeats and data
+    // Update heartbeats
     activeServers[jobId].lastSeen = Date.now();
     activeServers[jobId].playerCount = playerCount;
 
-    // Process incoming chat logs
+    // Process new chat packets
     if (packets && packets.length > 0) {
         packets.forEach(msg => {
             const entry = { t: new Date().toLocaleTimeString(), msg };
             activeServers[jobId].chats.push(entry);
+            // Global Feed link
             globalChat.unshift({ jobId: jobId, ...entry });
         });
-        // Limit history size to 100 per server and 100 global
+        // Limit memory
         if (activeServers[jobId].chats.length > 100) activeServers[jobId].chats.shift();
         if (globalChat.length > 100) globalChat.pop();
     }
@@ -63,11 +64,10 @@ app.get('/list-servers', (req, res) => {
     res.json({ servers: activeServers, global: globalChat, archives: archivedSessions });
 });
 
-// 3. ADMIN: Move logs to permanent Vault
+// 3. ADMIN: Archive
 app.post('/archive-session', (req, res) => {
     if (req.headers['x-api-key'] !== API_KEY) return res.status(401).send();
     const { jobId, customName } = req.body;
-    
     if (activeServers[jobId]) {
         const id = "ARC-" + Date.now();
         archivedSessions[id] = {
@@ -77,21 +77,21 @@ app.post('/archive-session', (req, res) => {
             date: new Date().toLocaleString()
         };
         res.send("Archived");
-    } else { res.status(404).send("Server Not Active"); }
+    } else { res.status(404).send("Not Active"); }
 });
 
-// 4. ADMIN: Delete archived logs
+// 4. ADMIN: Delete Archive
 app.post('/delete-archive', (req, res) => {
     if (req.headers['x-api-key'] !== API_KEY) return res.status(401).send();
     delete archivedSessions[req.body.archiveId];
     res.send("Deleted");
 });
 
-// 5. ADMIN: Terminate instance
+// 5. ADMIN: Terminate
 app.post('/kick-server', (req, res) => {
     if (req.headers['x-api-key'] !== API_KEY) return res.status(401).send();
     if (activeServers[req.body.jobId]) activeServers[req.body.jobId].shouldKick = true;
     res.send("Done");
 });
 
-app.listen(PORT, () => console.log(`Nexus System Online`));
+app.listen(PORT, () => console.log("Nexus System Online"));
