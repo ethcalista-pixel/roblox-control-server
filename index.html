@@ -7,777 +7,268 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:        #D9D9D7;
-            --s0:        #E4E4E2;
-            --s1:        #EAEAE8;
-            --s2:        #D2D2D0;
-            --s3:        #C8C8C6;
-            --b0:        #BFBFBD;
-            --b1:        #ADADAB;
-            --b2:        #909090;
-            --ink:       #111110;
-            --ink2:      #333331;
-            --ink3:      #666664;
-            --ink4:      #999997;
-            --ink5:      #B8B8B6;
-            --red:       #B52B1E;
-            --red-bg:    rgba(181,43,30,0.09);
-            --green:     #1A7040;
-            --green-bg:  rgba(26,112,64,0.09);
-            --amber:     #A05C00;
-            --amber-bg:  rgba(160,92,0,0.09);
-            --r:         5px;
-            --body:      'Outfit', sans-serif;
-            --mono:      'JetBrains Mono', monospace;
+            --bg:   #D9D9D7; --s0: #E4E4E2; --s1: #EAEAE8; --s2: #D2D2D0;
+            --s3:   #C8C8C6; --b0: #BFBFBD; --b1: #ADADAB; --b2: #909090;
+            --ink:  #111110; --ink2: #333331; --ink3: #666664; --ink4: #999997; --ink5: #B8B8B6;
+            --red:  #B52B1E; --red-bg: rgba(181,43,30,.09);
+            --green:#1A7040; --green-bg: rgba(26,112,64,.09);
+            --amber:#A05C00; --amber-bg: rgba(160,92,0,.09);
+            --blue: #1155AA; --blue-bg: rgba(17,85,170,.09);
+            --r: 5px; --body:'Outfit',sans-serif; --mono:'JetBrains Mono',monospace;
+        }
+        .dark {
+            --bg:#1A1A18; --s0:#222220; --s1:#2A2A28; --s2:#1E1E1C;
+            --s3:#181816; --b0:#3A3A38; --b1:#4A4A48; --b2:#666664;
+            --ink:#EAEAE8; --ink2:#C8C8C6; --ink3:#909090; --ink4:#666664; --ink5:#4A4A48;
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; font-family: var(--body); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%;font-family:var(--body);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
 
-        /* ───────────────────────────────
-           AUTH
-        ─────────────────────────────── */
-        #auth-wrap {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
+        /* ── AUTH ─────────────────────────── */
+        #auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+        .auth-card{width:100%;max-width:380px;background:var(--s1);border:1px solid var(--b0);border-radius:10px;padding:44px 36px 36px;box-shadow:0 2px 4px rgba(0,0,0,.06),0 12px 40px rgba(0,0,0,.10);animation:up .35s cubic-bezier(.16,1,.3,1)}
+        .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+        .auth-logo-mark{width:34px;height:34px;background:var(--ink);border-radius:7px;display:flex;align-items:center;justify-content:center}
+        .auth-logo-mark svg{width:16px;height:16px;fill:var(--s1)}
+        .auth-logo-name{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+        .auth-logo-sub{font-size:12px;color:var(--ink4);margin-top:1px}
+        .auth-heading{font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.3px;margin-bottom:6px}
+        .auth-desc{font-size:13px;color:var(--ink4);margin-bottom:28px;line-height:1.5}
+        .field-label{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:7px;display:block}
+        .auth-input{width:100%;padding:11px 14px;background:var(--s2);border:1.5px solid var(--b0);border-radius:var(--r);color:var(--ink);font-family:var(--mono);font-size:13px;letter-spacing:4px;outline:none;transition:border-color .18s,box-shadow .18s;margin-bottom:14px}
+        .auth-input::placeholder{letter-spacing:2px;color:var(--b1)}
+        .auth-input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(17,17,16,.09)}
+        .auth-btn{width:100%;padding:12px;background:var(--ink);border:none;border-radius:var(--r);color:var(--s1);font-family:var(--body);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .18s,transform .15s}
+        .auth-btn:hover{opacity:.85;transform:translateY(-1px)}
 
-        .auth-card {
-            width: 100%;
-            max-width: 380px;
-            background: var(--s1);
-            border: 1px solid var(--b0);
-            border-radius: 10px;
-            padding: 44px 36px 36px;
-            box-shadow: 0 2px 4px rgba(0,0,0,.06), 0 12px 40px rgba(0,0,0,.10);
-            animation: up .35s cubic-bezier(.16,1,.3,1);
-        }
+        /* ── DASHBOARD ────────────────────── */
+        #dashboard{display:none;flex-direction:column;height:100vh;overflow:hidden}
 
-        .auth-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 32px;
-        }
+        .topbar{height:52px;display:flex;align-items:center;gap:10px;padding:0 18px;background:var(--s1);border-bottom:1px solid var(--b0);flex-shrink:0;z-index:100}
+        .t-logo{display:flex;align-items:center;gap:8px;margin-right:6px}
+        .t-mark{width:26px;height:26px;background:var(--ink);border-radius:5px;display:flex;align-items:center;justify-content:center}
+        .t-mark svg{width:12px;height:12px;fill:var(--s1)}
+        .t-name{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+        .sep{width:1px;height:18px;background:var(--b0);flex-shrink:0}
+        .stat-pill{display:flex;align-items:center;gap:6px;padding:4px 11px;background:var(--s0);border:1px solid var(--b0);border-radius:20px;font-size:12px;font-weight:500;color:var(--ink3);white-space:nowrap;transition:background .25s,border-color .25s}
+        .stat-pill b{font-weight:700;color:var(--ink)}
+        .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);animation:breathe 2.5s ease-in-out infinite}
+        .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+        .tabs{display:flex;gap:2px;background:var(--s0);border:1px solid var(--b0);border-radius:7px;padding:3px}
+        .tab{padding:5px 15px;border:none;border-radius:5px;background:transparent;font-family:var(--body);font-size:13px;font-weight:500;color:var(--ink4);cursor:pointer;transition:all .18s}
+        .tab.on{background:var(--s1);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+        .icon-btn{width:34px;height:34px;background:var(--s0);border:1px solid var(--b0);border-radius:6px;color:var(--ink3);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
+        .icon-btn:hover{background:var(--s2);color:var(--ink)}
+        .icon-btn.active{background:var(--ink);color:var(--s1);border-color:var(--ink)}
 
-        .auth-logo-mark {
-            width: 34px; height: 34px;
-            background: var(--ink);
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* Refresh indicator dot on icon-btn */
+        .icon-btn .pause-indicator{display:none;position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+        .icon-btn.paused .pause-indicator{display:block}
 
-        .auth-logo-mark svg { width: 16px; height: 16px; fill: var(--s1); }
-
-        .auth-logo-name {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -.2px;
-        }
-
-        .auth-logo-sub {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--ink4);
-            margin-top: 1px;
-        }
-
-        .auth-heading {
-            font-size: 22px;
-            font-weight: 600;
-            color: var(--ink);
-            letter-spacing: -.3px;
-            margin-bottom: 6px;
-        }
-
-        .auth-desc {
-            font-size: 13px;
-            color: var(--ink4);
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .field-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--ink3);
-            margin-bottom: 7px;
-            display: block;
-        }
-
-        .auth-input {
-            width: 100%;
-            padding: 11px 14px;
-            background: var(--s2);
-            border: 1.5px solid var(--b0);
-            border-radius: var(--r);
-            color: var(--ink);
-            font-family: var(--mono);
-            font-size: 13px;
-            letter-spacing: 4px;
-            outline: none;
-            transition: border-color .18s, box-shadow .18s;
-            margin-bottom: 14px;
-        }
-
-        .auth-input::placeholder { letter-spacing: 2px; color: var(--b1); }
-        .auth-input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,16,.09); }
-
-        .auth-btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--ink);
-            border: none;
-            border-radius: var(--r);
-            color: var(--s1);
-            font-family: var(--body);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity .18s, transform .15s;
-        }
-
-        .auth-btn:hover  { opacity: .85; transform: translateY(-1px); }
-        .auth-btn:active { transform: translateY(0); opacity: .95; }
-
-        /* ───────────────────────────────
-           DASHBOARD
-        ─────────────────────────────── */
-        #dashboard {
-            display: none;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* TOPBAR */
-        .topbar {
-            height: 52px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 18px;
-            background: var(--s1);
-            border-bottom: 1px solid var(--b0);
-            flex-shrink: 0;
-            z-index: 100;
-        }
-
-        .t-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-right: 6px;
-        }
-
-        .t-mark {
-            width: 26px; height: 26px;
-            background: var(--ink);
-            border-radius: 5px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .t-mark svg { width: 12px; height: 12px; fill: var(--s1); }
-
-        .t-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -.2px;
-        }
-
-        .sep { width: 1px; height: 18px; background: var(--b0); flex-shrink: 0; }
-
-        .stat-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 11px;
-            background: var(--s0);
-            border: 1px solid var(--b0);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--ink3);
-            white-space: nowrap;
-        }
-
-        .stat-pill b { font-weight: 700; color: var(--ink); }
-
-        .pulse {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--green);
-            animation: breathe 2.5s ease-in-out infinite;
-        }
-
-        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-
-        .tabs {
-            display: flex;
-            gap: 2px;
-            background: var(--s0);
-            border: 1px solid var(--b0);
-            border-radius: 7px;
-            padding: 3px;
-        }
-
-        .tab {
-            padding: 5px 15px;
-            border: none;
-            border-radius: 5px;
-            background: transparent;
-            font-family: var(--body);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--ink4);
-            cursor: pointer;
-            transition: all .18s;
-        }
-
-        .tab.on {
-            background: var(--s1);
-            color: var(--ink);
-            font-weight: 600;
-            box-shadow: 0 1px 3px rgba(0,0,0,.08);
-        }
-
-        .icon-btn {
-            width: 34px; height: 34px;
-            background: var(--s0);
-            border: 1px solid var(--b0);
-            border-radius: 6px;
-            color: var(--ink3);
-            font-size: 15px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all .15s;
-        }
-
-        .icon-btn:hover { background: var(--s2); color: var(--ink); }
-
-        /* ───────────────────────────────
-           WORKSPACE
-        ─────────────────────────────── */
-        .workspace {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
+        /* ── WORKSPACE ───────────────────── */
+        .workspace{flex:1;display:flex;overflow:hidden}
 
         /* SERVER PANE */
-        .server-pane {
-            flex: 1;
-            overflow-y: auto;
-            padding: 18px;
-        }
+        .server-pane{flex:1;overflow-y:auto;padding:18px}
+        .server-pane::-webkit-scrollbar{width:5px}
+        .server-pane::-webkit-scrollbar-thumb{background:var(--b1);border-radius:3px}
+        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .section-title{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink4)}
 
-        .server-pane::-webkit-scrollbar { width: 5px; }
-        .server-pane::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 3px; }
+        /* refresh status badge */
+        .refresh-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,92,0,.2);display:none}
+        .refresh-badge.show{display:inline-flex;align-items:center;gap:5px}
 
-        .section-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .section-title {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            color: var(--ink4);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 12px;
-        }
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+        .grid.compact{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
 
         /* SERVER CARD */
-        .card {
-            background: var(--s1);
-            border: 1px solid var(--b0);
-            border-radius: 8px;
-            padding: 18px;
-            cursor: pointer;
-            transition: border-color .18s, box-shadow .18s, transform .15s;
-            animation: up .3s cubic-bezier(.16,1,.3,1) both;
-            position: relative;
-            overflow: hidden;
+        .card{background:var(--s1);border:1px solid var(--b0);border-radius:8px;padding:18px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .15s;animation:up .3s cubic-bezier(.16,1,.3,1) both;position:relative;overflow:hidden}
+        .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .2s}
+        .card:hover{border-color:var(--b1);box-shadow:0 2px 8px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.05);transform:translateY(-1px)}
+        .card.on{border-color:var(--ink2);box-shadow:0 0 0 2px var(--ink2)}
+        .card.on::after{background:var(--ink)}
+        .card.flash{animation:flashCard 2s ease forwards}
+        .card.compact-card{padding:14px}
+
+        .card-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+        .card-id{font-family:var(--mono);font-size:10px;color:var(--ink5);letter-spacing:.3px;cursor:pointer;transition:color .15s}
+        .card-id:hover{color:var(--blue)}
+        .card-id.copied{color:var(--green) !important}
+        .badge{font-size:10px;font-weight:600;letter-spacing:.8px;padding:3px 8px;border-radius:4px;text-transform:uppercase}
+        .badge-live{background:var(--green-bg);color:var(--green)}
+        .badge-studio{background:var(--amber-bg);color:var(--amber)}
+        .big-num{font-size:52px;font-weight:700;line-height:1;color:var(--ink);letter-spacing:-2px;margin-bottom:2px}
+        .compact-card .big-num{font-size:36px}
+        .big-label{font-size:12px;font-weight:400;color:var(--ink4);margin-bottom:16px}
+        .compact-card .big-label{margin-bottom:10px}
+
+        .players{border-top:1px solid var(--b0);padding-top:13px;margin-bottom:14px}
+        .players-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:9px}
+        .p-row{display:flex;align-items:center;gap:8px;padding:3.5px 0}
+        .p-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+        .p-name{font-size:13px;font-weight:500;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .p-more{font-size:11px;color:var(--ink5);padding-top:3px}
+        .p-none{font-size:12px;color:var(--ink5)}
+
+        .card-btns{display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--b0);padding-top:13px}
+        .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:5px;border:1px solid transparent;font-family:var(--body);font-size:12px;font-weight:600;cursor:pointer;transition:all .14s;white-space:nowrap}
+        .btn-ghost{background:var(--s0);border-color:var(--b0);color:var(--ink3)}
+        .btn-ghost:hover{background:var(--s2);border-color:var(--b1);color:var(--ink)}
+        .btn-dark{background:var(--ink);border-color:var(--ink);color:var(--s1)}
+        .btn-dark:hover{opacity:.8}
+        .btn-red{background:var(--red-bg);border-color:rgba(181,43,30,.2);color:var(--red)}
+        .btn-red:hover{background:var(--red);border-color:var(--red);color:white}
+        .card-hint{font-family:var(--mono);font-size:9px;color:var(--ink5);text-align:right;margin-top:9px;letter-spacing:.5px}
+
+        /* ── CHAT PANEL ───────────────────── */
+        .chat-panel{width:360px;flex-shrink:0;border-left:1px solid var(--b0);background:var(--s0);display:flex;flex-direction:column}
+        .panel-head{padding:14px 16px;border-bottom:1px solid var(--b0);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--s1)}
+        .panel-mode{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink5);margin-bottom:2px}
+        .panel-name{font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.2px}
+        .panel-close{display:none;width:28px;height:28px;background:var(--s2);border:1px solid var(--b0);border-radius:5px;color:var(--ink3);cursor:pointer;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .15s}
+        .panel-close:hover{background:var(--s3);color:var(--ink)}
+        .chat-body{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:2px}
+        .chat-body::-webkit-scrollbar{width:4px}
+        .chat-body::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+        .msg{padding:8px 10px;border-radius:6px;border-left:2px solid transparent;transition:background .13s}
+        .msg:hover{background:var(--s1)}
+        .msg.g-msg{border-left-color:var(--b2)}
+        .msg.i-msg{border-left-color:var(--green)}
+        .msg-meta{display:flex;align-items:center;gap:7px;margin-bottom:3px}
+        .srv-tag{font-family:var(--mono);font-size:9px;font-weight:500;background:rgba(17,17,16,.07);color:var(--ink2);padding:2px 6px;border-radius:3px;cursor:pointer;transition:all .13s;letter-spacing:.5px}
+        .srv-tag:hover{background:var(--ink);color:var(--s1)}
+        .msg-time{font-family:var(--mono);font-size:9px;color:var(--ink5)}
+        .msg-text{font-size:12.5px;color:var(--ink2);line-height:1.5;word-break:break-word}
+        .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:40px;text-align:center}
+        .es-icon{font-size:28px;opacity:.25;margin-bottom:4px}
+        .es-title{font-size:13px;font-weight:600;color:var(--ink3)}
+        .es-sub{font-size:12px;color:var(--ink5)}
+
+        /* ── VAULT ────────────────────────── */
+        #vault-view{display:none;flex:1;overflow-y:auto;padding:18px}
+        #vault-view::-webkit-scrollbar{width:5px}
+        #vault-view::-webkit-scrollbar-thumb{background:var(--b1);border-radius:3px}
+        .vault-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+        .arc-card{background:var(--s1);border:1px solid var(--b0);border-radius:8px;padding:18px;animation:up .3s cubic-bezier(.16,1,.3,1) both}
+        .arc-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+        .arc-name{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+        .arc-btns{display:flex;gap:6px;flex-shrink:0}
+        .arc-log{background:var(--s2);border:1px solid var(--b0);border-radius:5px;padding:11px 12px;height:155px;overflow-y:auto;font-family:var(--mono);font-size:10px;line-height:1.85;color:var(--ink3)}
+        .arc-log::-webkit-scrollbar{width:3px}
+        .arc-log::-webkit-scrollbar-thumb{background:var(--b1)}
+        .arc-t{color:var(--ink5)}
+        .empty-grid{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;padding:70px 0;gap:8px}
+
+        /* ── SETTINGS DRAWER ──────────────── */
+        .settings-drawer{
+            position:fixed;top:0;right:0;bottom:0;width:320px;
+            background:var(--s1);border-left:1px solid var(--b0);
+            z-index:500;display:flex;flex-direction:column;
+            transform:translateX(100%);
+            transition:transform .28s cubic-bezier(.16,1,.3,1);
+            box-shadow:-8px 0 32px rgba(0,0,0,.10);
         }
+        .settings-drawer.open{transform:translateX(0)}
 
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: transparent;
-            transition: background .2s;
+        .sd-head{
+            display:flex;align-items:center;justify-content:space-between;
+            padding:16px 20px;border-bottom:1px solid var(--b0);flex-shrink:0;
         }
+        .sd-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.2px}
+        .sd-close{width:28px;height:28px;background:var(--s2);border:1px solid var(--b0);border-radius:5px;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+        .sd-close:hover{background:var(--s3);color:var(--ink)}
 
-        .card:hover {
-            border-color: var(--b1);
-            box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
-            transform: translateY(-1px);
+        .sd-body{flex:1;overflow-y:auto;padding:20px}
+        .sd-body::-webkit-scrollbar{width:4px}
+        .sd-body::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+
+        .sd-section{margin-bottom:28px}
+        .sd-section-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--b0)}
+
+        /* Row inside drawer */
+        .sd-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--b0)}
+        .sd-row:last-child{border-bottom:none}
+        .sd-row-info{}
+        .sd-row-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+        .sd-row-sub{font-size:11px;color:var(--ink4);line-height:1.4}
+
+        /* Toggle switch */
+        .toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+        .toggle input{opacity:0;width:0;height:0;position:absolute}
+        .toggle-track{
+            position:absolute;inset:0;
+            background:var(--b1);border-radius:11px;cursor:pointer;
+            transition:background .2s;
         }
-
-        .card.on {
-            border-color: var(--ink2);
-            box-shadow: 0 0 0 2px var(--ink2);
+        .toggle-track::after{
+            content:'';position:absolute;
+            width:16px;height:16px;border-radius:50%;
+            background:white;top:3px;left:3px;
+            transition:transform .2s;
+            box-shadow:0 1px 3px rgba(0,0,0,.2);
         }
+        .toggle input:checked + .toggle-track{background:var(--ink)}
+        .toggle input:checked + .toggle-track::after{transform:translateX(18px)}
 
-        .card.on::after { background: var(--ink); }
+        /* Segment control */
+        .seg{display:flex;background:var(--s2);border:1px solid var(--b0);border-radius:6px;padding:2px;gap:2px}
+        .seg-opt{padding:5px 10px;border:none;border-radius:4px;background:transparent;font-family:var(--body);font-size:11px;font-weight:600;color:var(--ink4);cursor:pointer;transition:all .15s;white-space:nowrap}
+        .seg-opt.on{background:var(--s1);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 
-        .card.flash { animation: flashCard 2s ease forwards; }
+        /* Number stepper */
+        .stepper{display:flex;align-items:center;gap:6px}
+        .stepper-val{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink);min-width:28px;text-align:center}
+        .stepper-btn{width:26px;height:26px;background:var(--s2);border:1px solid var(--b0);border-radius:4px;color:var(--ink3);font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:var(--mono)}
+        .stepper-btn:hover{background:var(--s3);color:var(--ink)}
+        .stepper-btn:disabled{opacity:.3;cursor:not-allowed}
 
-        .card-row {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 14px;
+        /* Toast */
+        .toast{
+            position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+            background:var(--ink);color:var(--s1);
+            padding:10px 18px;border-radius:8px;
+            font-size:13px;font-weight:500;
+            opacity:0;pointer-events:none;
+            transition:opacity .2s,transform .25s;
+            z-index:9999;white-space:nowrap;
+            box-shadow:0 4px 16px rgba(0,0,0,.2);
         }
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-        .card-id {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--ink5);
-            letter-spacing: .3px;
+        /* ── MOBILE ───────────────────────── */
+        .overlay{display:none;position:fixed;inset:0;background:rgba(17,17,16,.3);z-index:199;opacity:0;transition:opacity .25s}
+        .overlay.show{opacity:1}
+        .sd-overlay{display:none;position:fixed;inset:0;background:rgba(17,17,16,.3);z-index:490;opacity:0;transition:opacity .25s}
+        .sd-overlay.show{opacity:1}
+        .fab{display:none;position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:var(--ink);color:var(--s1);border:none;box-shadow:0 4px 16px rgba(0,0,0,.18);cursor:pointer;align-items:center;justify-content:center;font-size:19px;z-index:150;transition:transform .15s}
+        .fab:active{transform:scale(.93)}
+
+        /* ── ANIMATIONS ───────────────────── */
+        @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes breathe{0%,100%{opacity:1}50%{opacity:.35}}
+        @keyframes flashCard{0%{border-color:var(--b0);box-shadow:none}15%{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink)}70%{border-color:var(--b1);box-shadow:0 0 0 1px var(--b1)}100%{border-color:var(--b0);box-shadow:none}}
+
+        /* ── RESPONSIVE ───────────────────── */
+        @media(max-width:1024px){.chat-panel{width:310px}}
+        @media(max-width:768px){
+            .topbar{padding:0 14px;gap:8px}
+            .stat-pill.xs-hide{display:none}
+            .sep{display:none}
+            .server-pane{padding:14px}
+            .grid{grid-template-columns:1fr}
+            .chat-panel{position:fixed;inset:auto 0 0 0;width:100%;height:68vh;border-left:none;border-top:1.5px solid var(--b0);border-radius:14px 14px 0 0;box-shadow:0 -6px 30px rgba(0,0,0,.12);transform:translateY(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);z-index:200}
+            .chat-panel.open{transform:translateY(0)}
+            .panel-close{display:flex}
+            .overlay{display:block}
+            .fab{display:flex}
+            #vault-view{padding:14px}
+            .vault-grid{grid-template-columns:1fr}
+            .arc-top{flex-wrap:wrap}
+            .settings-drawer{width:100%;max-width:360px}
         }
-
-        .badge {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: .8px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .badge-live   { background: var(--green-bg); color: var(--green); }
-        .badge-studio { background: var(--amber-bg); color: var(--amber); }
-
-        .big-num {
-            font-size: 52px;
-            font-weight: 700;
-            line-height: 1;
-            color: var(--ink);
-            letter-spacing: -2px;
-            margin-bottom: 2px;
-        }
-
-        .big-label {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--ink4);
-            margin-bottom: 16px;
-        }
-
-        /* Player list */
-        .players {
-            border-top: 1px solid var(--b0);
-            padding-top: 13px;
-            margin-bottom: 14px;
-        }
-
-        .players-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--ink5);
-            margin-bottom: 9px;
-        }
-
-        .p-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 3.5px 0;
-        }
-
-        .p-dot {
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--green);
-            flex-shrink: 0;
-        }
-
-        .p-name {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--ink2);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .p-more { font-size: 11px; color: var(--ink5); padding-top: 3px; }
-        .p-none { font-size: 12px; color: var(--ink5); }
-
-        /* Card buttons */
-        .card-btns {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            border-top: 1px solid var(--b0);
-            padding-top: 13px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 12px;
-            border-radius: 5px;
-            border: 1px solid transparent;
-            font-family: var(--body);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all .14s;
-            white-space: nowrap;
-        }
-
-        .btn-ghost {
-            background: var(--s0);
-            border-color: var(--b0);
-            color: var(--ink3);
-        }
-
-        .btn-ghost:hover { background: var(--s2); border-color: var(--b1); color: var(--ink); }
-
-        .btn-dark {
-            background: var(--ink);
-            border-color: var(--ink);
-            color: var(--s1);
-        }
-
-        .btn-dark:hover { opacity: .8; }
-
-        .btn-red {
-            background: var(--red-bg);
-            border-color: rgba(181,43,30,.2);
-            color: var(--red);
-        }
-
-        .btn-red:hover { background: var(--red); border-color: var(--red); color: white; }
-
-        .card-hint {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--ink5);
-            text-align: right;
-            margin-top: 9px;
-            letter-spacing: .5px;
-        }
-
-        /* ───────────────────────────────
-           CHAT PANEL
-        ─────────────────────────────── */
-        .chat-panel {
-            width: 360px;
-            flex-shrink: 0;
-            border-left: 1px solid var(--b0);
-            background: var(--s0);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-head {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--b0);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            background: var(--s1);
-        }
-
-        .panel-mode {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--ink5);
-            margin-bottom: 2px;
-        }
-
-        .panel-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--ink);
-            letter-spacing: -.2px;
-        }
-
-        .panel-close {
-            display: none;
-            width: 28px; height: 28px;
-            background: var(--s2);
-            border: 1px solid var(--b0);
-            border-radius: 5px;
-            color: var(--ink3);
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-            transition: all .15s;
-        }
-
-        .panel-close:hover { background: var(--s3); color: var(--ink); }
-
-        .chat-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .chat-body::-webkit-scrollbar { width: 4px; }
-        .chat-body::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 2px; }
-
-        .msg {
-            padding: 8px 10px;
-            border-radius: 6px;
-            border-left: 2px solid transparent;
-            transition: background .13s;
-        }
-
-        .msg:hover { background: var(--s1); }
-        .msg.g-msg { border-left-color: var(--b2); }
-        .msg.i-msg { border-left-color: var(--green); }
-
-        .msg-meta {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            margin-bottom: 3px;
-        }
-
-        .srv-tag {
-            font-family: var(--mono);
-            font-size: 9px;
-            font-weight: 500;
-            background: rgba(17,17,16,.07);
-            color: var(--ink2);
-            padding: 2px 6px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all .13s;
-            letter-spacing: .5px;
-        }
-
-        .srv-tag:hover { background: var(--ink); color: var(--s1); }
-
-        .msg-time {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--ink5);
-        }
-
-        .msg-text {
-            font-size: 12.5px;
-            color: var(--ink2);
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .empty-state {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .es-icon  { font-size: 28px; opacity: .25; margin-bottom: 4px; }
-        .es-title { font-size: 13px; font-weight: 600; color: var(--ink3); }
-        .es-sub   { font-size: 12px; color: var(--ink5); }
-
-        /* ───────────────────────────────
-           VAULT
-        ─────────────────────────────── */
-        #vault-view {
-            display: none;
-            flex: 1;
-            overflow-y: auto;
-            padding: 18px;
-        }
-
-        #vault-view::-webkit-scrollbar { width: 5px; }
-        #vault-view::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 3px; }
-
-        .vault-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 12px;
-        }
-
-        .arc-card {
-            background: var(--s1);
-            border: 1px solid var(--b0);
-            border-radius: 8px;
-            padding: 18px;
-            animation: up .3s cubic-bezier(.16,1,.3,1) both;
-        }
-
-        .arc-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-        .arc-name {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -.2px;
-        }
-
-        .arc-btns { display: flex; gap: 6px; flex-shrink: 0; }
-
-        .arc-log {
-            background: var(--s2);
-            border: 1px solid var(--b0);
-            border-radius: 5px;
-            padding: 11px 12px;
-            height: 155px;
-            overflow-y: auto;
-            font-family: var(--mono);
-            font-size: 10px;
-            line-height: 1.85;
-            color: var(--ink3);
-        }
-
-        .arc-log::-webkit-scrollbar { width: 3px; }
-        .arc-log::-webkit-scrollbar-thumb { background: var(--b1); }
-        .arc-t { color: var(--ink5); }
-
-        .empty-grid {
-            grid-column: 1/-1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 70px 0;
-            gap: 8px;
-        }
-
-        /* ───────────────────────────────
-           MOBILE
-        ─────────────────────────────── */
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(17,17,16,.3);
-            z-index: 199;
-            opacity: 0;
-            transition: opacity .25s;
-        }
-
-        .overlay.show { opacity: 1; }
-
-        .fab {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            background: var(--ink);
-            color: var(--s1);
-            border: none;
-            box-shadow: 0 4px 16px rgba(0,0,0,.18);
-            cursor: pointer;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            z-index: 150;
-            transition: transform .15s;
-        }
-
-        .fab:active { transform: scale(.93); }
-
-        /* ───────────────────────────────
-           ANIMATIONS
-        ─────────────────────────────── */
-        @keyframes up {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes breathe {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: .35; }
-        }
-
-        @keyframes flashCard {
-            0%   { border-color: var(--b0); box-shadow: none; }
-            15%  { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
-            70%  { border-color: var(--b1); box-shadow: 0 0 0 1px var(--b1); }
-            100% { border-color: var(--b0); box-shadow: none; }
-        }
-
-        /* ───────────────────────────────
-           RESPONSIVE
-        ─────────────────────────────── */
-        @media (max-width: 1024px) {
-            .chat-panel { width: 310px; }
-        }
-
-        @media (max-width: 768px) {
-            .topbar { padding: 0 14px; gap: 8px; }
-            .stat-pill.xs-hide { display: none; }
-            .sep { display: none; }
-
-            .server-pane { padding: 14px; }
-            .grid { grid-template-columns: 1fr; }
-
-            .chat-panel {
-                position: fixed;
-                inset: auto 0 0 0;
-                width: 100%;
-                height: 68vh;
-                border-left: none;
-                border-top: 1.5px solid var(--b0);
-                border-radius: 14px 14px 0 0;
-                box-shadow: 0 -6px 30px rgba(0,0,0,.12);
-                transform: translateY(100%);
-                transition: transform .3s cubic-bezier(.16,1,.3,1);
-                z-index: 200;
-            }
-
-            .chat-panel.open { transform: translateY(0); }
-            .panel-close { display: flex; }
-            .overlay { display: block; }
-            .fab { display: flex; }
-
-            #vault-view { padding: 14px; }
-            .vault-grid { grid-template-columns: 1fr; }
-            .arc-top { flex-wrap: wrap; }
-        }
-
-        @media (max-width: 420px) {
-            .auth-card { padding: 32px 22px 28px; }
-            .big-num { font-size: 44px; }
-        }
+        @media(max-width:420px){.auth-card{padding:32px 22px 28px}.big-num{font-size:44px}}
     </style>
 </head>
 <body>
@@ -786,13 +277,8 @@
 <div id="auth-wrap">
     <div class="auth-card">
         <div class="auth-logo">
-            <div class="auth-logo-mark">
-                <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
-            </div>
-            <div>
-                <div class="auth-logo-name">Nexus</div>
-                <div class="auth-logo-sub">Command Center</div>
-            </div>
+            <div class="auth-logo-mark"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></div>
+            <div><div class="auth-logo-name">Nexus</div><div class="auth-logo-sub">Command Center</div></div>
         </div>
         <div class="auth-heading">Sign in</div>
         <div class="auth-desc">Enter your system key to access the dashboard.</div>
@@ -806,9 +292,7 @@
 <div id="dashboard">
     <div class="topbar">
         <div class="t-logo">
-            <div class="t-mark">
-                <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
-            </div>
+            <div class="t-mark"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></div>
             <span class="t-name">Nexus</span>
         </div>
         <div class="sep"></div>
@@ -820,19 +304,27 @@
                 <button class="tab on" id="tab-live" onclick="switchTab('live')">Live</button>
                 <button class="tab" id="tab-vault" onclick="switchTab('vault')">Vault</button>
             </div>
+            <!-- Refresh toggle -->
+            <button class="icon-btn" id="refresh-btn" title="Pause auto-refresh" onclick="toggleRefresh()">
+                <span id="refresh-icon">⟳</span>
+                <span class="pause-indicator"></span>
+            </button>
+            <!-- Settings -->
+            <button class="icon-btn" id="settings-btn" title="Settings" onclick="toggleSettings()">⚙</button>
             <button class="icon-btn" title="Log out" onclick="location.reload()">⏻</button>
         </div>
     </div>
 
+    <!-- LIVE VIEW -->
     <div id="live-view" class="workspace">
         <div class="server-pane">
             <div class="section-head">
                 <span class="section-title">Active Instances</span>
+                <span class="refresh-badge" id="paused-badge">⏸ Paused</span>
             </div>
             <div class="grid" id="server-grid">
                 <div style="grid-column:1/-1;padding:64px 0;text-align:center;">
-                    <div class="es-icon">◌</div>
-                    <div class="es-title">Connecting…</div>
+                    <div class="es-icon">◌</div><div class="es-title">Connecting…</div>
                 </div>
             </div>
         </div>
@@ -855,27 +347,360 @@
         </div>
     </div>
 
+    <!-- VAULT VIEW -->
     <div id="vault-view">
         <div class="vault-grid" id="archive-grid"></div>
     </div>
 </div>
 
+<!-- SETTINGS DRAWER -->
+<div class="sd-overlay" id="sd-overlay" onclick="closeSettings()"></div>
+<div class="settings-drawer" id="settings-drawer">
+    <div class="sd-head">
+        <span class="sd-title">Settings</span>
+        <button class="sd-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="sd-body">
+
+        <!-- APPEARANCE -->
+        <div class="sd-section">
+            <div class="sd-section-label">Appearance</div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Dark mode</div>
+                    <div class="sd-row-sub">Switch to a dark color scheme</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-darkmode" onchange="applyDarkMode(this.checked)"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Compact cards</div>
+                    <div class="sd-row-sub">Smaller cards, denser grid</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-compact" onchange="applyCompact(this.checked)"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Show player list</div>
+                    <div class="sd-row-sub">Display names on each card</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-showplayers" checked onchange="applyShowPlayers(this.checked)"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Max players shown</div>
+                    <div class="sd-row-sub">Per card (when list is visible)</div>
+                </div>
+                <div class="stepper">
+                    <button class="stepper-btn" onclick="changeMaxPlayers(-1)">−</button>
+                    <span class="stepper-val" id="s-maxplayers-val">5</span>
+                    <button class="stepper-btn" onclick="changeMaxPlayers(1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA -->
+        <div class="sd-section">
+            <div class="sd-section-label">Data & Refresh</div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Auto-refresh</div>
+                    <div class="sd-row-sub">Automatically poll for updates</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-autorefresh" checked onchange="applyAutoRefresh(this.checked)"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Refresh interval</div>
+                    <div class="sd-row-sub">How often to poll</div>
+                </div>
+                <div class="seg" id="seg-interval">
+                    <button class="seg-opt" onclick="setInterval_(3000)">3s</button>
+                    <button class="seg-opt on" onclick="setInterval_(5000)">5s</button>
+                    <button class="seg-opt" onclick="setInterval_(10000)">10s</button>
+                    <button class="seg-opt" onclick="setInterval_(30000)">30s</button>
+                </div>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Time format</div>
+                    <div class="sd-row-sub">Timestamps in the feed</div>
+                </div>
+                <div class="seg">
+                    <button class="seg-opt on" id="tf-12" onclick="setTimeFormat('12h')">12h</button>
+                    <button class="seg-opt" id="tf-24" onclick="setTimeFormat('24h')">24h</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BEHAVIOUR -->
+        <div class="sd-section">
+            <div class="sd-section-label">Behaviour</div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Confirm terminate</div>
+                    <div class="sd-row-sub">Show a prompt before kicking</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-confirmterm" checked onchange="cfg.confirmTerminate=this.checked;save()"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Confirm purge</div>
+                    <div class="sd-row-sub">Show a prompt before purging archives</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-confirmpurge" checked onchange="cfg.confirmPurge=this.checked;save()"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Click ID to copy</div>
+                    <div class="sd-row-sub">Copy full instance ID on click</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-copyid" checked onchange="cfg.copyId=this.checked;save()"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
+                    <div class="sd-row-label">Sound alerts</div>
+                    <div class="sd-row-sub">Beep when a server connects/drops</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-sounds" onchange="cfg.sounds=this.checked;save()"><span class="toggle-track"></span></label>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- OVERLAYS & FAB -->
 <div class="overlay" id="overlay" onclick="closeMobile()"></div>
 <button class="fab" id="fab" onclick="openMobile()">💬</button>
+<div class="toast" id="toast"></div>
 
 <script>
-    let apiKey = "", masterData = { servers:{}, global:[], archives:{} }, sel = null;
+    /* ─────────────────────────────────────────
+       CONFIG — persisted to localStorage
+    ───────────────────────────────────────── */
+    const DEFAULTS = {
+        darkMode:        false,
+        compact:         false,
+        showPlayers:     true,
+        maxPlayers:      5,
+        autoRefresh:     true,
+        refreshInterval: 5000,
+        timeFormat:      '12h',
+        confirmTerminate:true,
+        confirmPurge:    true,
+        copyId:          true,
+        sounds:          false,
+    };
 
+    let cfg = { ...DEFAULTS };
+
+    function save() { try { localStorage.setItem('nxcfg', JSON.stringify(cfg)); } catch(e){} }
+
+    function loadCfg() {
+        try {
+            const stored = JSON.parse(localStorage.getItem('nxcfg') || '{}');
+            cfg = { ...DEFAULTS, ...stored };
+        } catch(e) { cfg = { ...DEFAULTS }; }
+    }
+
+    function applyCfgToUI() {
+        document.getElementById('s-darkmode').checked    = cfg.darkMode;
+        document.getElementById('s-compact').checked     = cfg.compact;
+        document.getElementById('s-showplayers').checked = cfg.showPlayers;
+        document.getElementById('s-maxplayers-val').textContent = cfg.maxPlayers;
+        document.getElementById('s-autorefresh').checked = cfg.autoRefresh;
+        document.getElementById('s-confirmterm').checked = cfg.confirmTerminate;
+        document.getElementById('s-confirmpurge').checked = cfg.confirmPurge;
+        document.getElementById('s-copyid').checked      = cfg.copyId;
+        document.getElementById('s-sounds').checked      = cfg.sounds;
+
+        // Segment: interval
+        document.querySelectorAll('#seg-interval .seg-opt').forEach(b => {
+            b.classList.toggle('on', parseInt(b.textContent) * 1000 === cfg.refreshInterval ||
+                (b.textContent === '30s' && cfg.refreshInterval === 30000) ||
+                (b.textContent === '10s' && cfg.refreshInterval === 10000) ||
+                (b.textContent === '5s'  && cfg.refreshInterval === 5000)  ||
+                (b.textContent === '3s'  && cfg.refreshInterval === 3000));
+        });
+        // Simpler: just re-run setInterval_ to highlight correct btn
+        _highlightInterval(cfg.refreshInterval);
+
+        // Time format
+        document.getElementById('tf-12').classList.toggle('on', cfg.timeFormat === '12h');
+        document.getElementById('tf-24').classList.toggle('on', cfg.timeFormat === '24h');
+
+        // Apply side-effects
+        if (cfg.darkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+        document.getElementById('server-grid').classList.toggle('compact', cfg.compact);
+    }
+
+    /* ─────────────────────────────────────────
+       SETTINGS HANDLERS
+    ───────────────────────────────────────── */
+    function applyDarkMode(on) {
+        cfg.darkMode = on;
+        document.documentElement.classList.toggle('dark', on);
+        save();
+    }
+
+    function applyCompact(on) {
+        cfg.compact = on;
+        document.getElementById('server-grid').classList.toggle('compact', on);
+        save();
+        refresh();
+    }
+
+    function applyShowPlayers(on) {
+        cfg.showPlayers = on;
+        save();
+        refresh();
+    }
+
+    function changeMaxPlayers(delta) {
+        cfg.maxPlayers = Math.min(20, Math.max(1, cfg.maxPlayers + delta));
+        document.getElementById('s-maxplayers-val').textContent = cfg.maxPlayers;
+        save();
+        refresh();
+    }
+
+    function applyAutoRefresh(on) {
+        cfg.autoRefresh = on;
+        const btn = document.getElementById('refresh-btn');
+        btn.classList.toggle('paused', !on);
+        document.getElementById('paused-badge').classList.toggle('show', !on);
+        save();
+    }
+
+    function toggleRefresh() {
+        cfg.autoRefresh = !cfg.autoRefresh;
+        document.getElementById('s-autorefresh').checked = cfg.autoRefresh;
+        applyAutoRefresh(cfg.autoRefresh);
+        toast(cfg.autoRefresh ? 'Auto-refresh on' : 'Auto-refresh paused');
+    }
+
+    let refreshTimer = null;
+
+    function setInterval_(ms) {
+        cfg.refreshInterval = ms;
+        _highlightInterval(ms);
+        save();
+        // restart timer
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = setInterval(() => { if (cfg.autoRefresh) refresh(); }, ms);
+        toast('Refresh every ' + (ms >= 1000 ? ms/1000 + 's' : ms + 'ms'));
+    }
+
+    function _highlightInterval(ms) {
+        document.querySelectorAll('#seg-interval .seg-opt').forEach(b => {
+            const val = parseInt(b.textContent) * 1000;
+            b.classList.toggle('on', val === ms);
+        });
+    }
+
+    function setTimeFormat(fmt) {
+        cfg.timeFormat = fmt;
+        document.getElementById('tf-12').classList.toggle('on', fmt === '12h');
+        document.getElementById('tf-24').classList.toggle('on', fmt === '24h');
+        save();
+        renderPanel();
+    }
+
+    function fmtTime(dateObj) {
+        if (cfg.timeFormat === '24h') {
+            return dateObj.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        }
+        return dateObj.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', second:'2-digit' });
+    }
+
+    /* ─────────────────────────────────────────
+       SETTINGS DRAWER
+    ───────────────────────────────────────── */
+    function toggleSettings() {
+        const open = document.getElementById('settings-drawer').classList.contains('open');
+        open ? closeSettings() : openSettings();
+    }
+
+    function openSettings() {
+        document.getElementById('settings-drawer').classList.add('open');
+        document.getElementById('settings-btn').classList.add('active');
+        const ov = document.getElementById('sd-overlay');
+        ov.style.display = 'block';
+        requestAnimationFrame(() => ov.classList.add('show'));
+    }
+
+    function closeSettings() {
+        document.getElementById('settings-drawer').classList.remove('open');
+        document.getElementById('settings-btn').classList.remove('active');
+        const ov = document.getElementById('sd-overlay');
+        ov.classList.remove('show');
+        setTimeout(() => ov.style.display = 'none', 260);
+    }
+
+    /* ─────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────── */
+    let toastTimer = null;
+    function toast(msg) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    /* ─────────────────────────────────────────
+       SOUND
+    ───────────────────────────────────────── */
+    function beep(freq = 660, dur = 80, type = 'sine') {
+        if (!cfg.sounds) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = freq; osc.type = type;
+            gain.gain.setValueAtTime(.18, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + dur/1000);
+            osc.start(); osc.stop(ctx.currentTime + dur/1000);
+        } catch(e) {}
+    }
+
+    /* ─────────────────────────────────────────
+       CORE STATE
+    ───────────────────────────────────────── */
+    let apiKey = '', masterData = { servers:{}, global:[], archives:{} }, sel = null;
+    let prevServerIds = new Set();
+
+    /* ─────────────────────────────────────────
+       AUTH
+    ───────────────────────────────────────── */
     function login() {
         apiKey = document.getElementById('key-input').value.trim();
         if (!apiKey) return;
+        loadCfg();
         document.getElementById('auth-wrap').style.display = 'none';
         const d = document.getElementById('dashboard');
         d.style.display = 'flex';
+        applyCfgToUI();
         refresh();
-        setInterval(refresh, 3000);
+        refreshTimer = setInterval(() => { if (cfg.autoRefresh) refresh(); }, cfg.refreshInterval);
     }
 
+    /* ─────────────────────────────────────────
+       TABS
+    ───────────────────────────────────────── */
     function switchTab(t) {
         document.getElementById('tab-live').classList.toggle('on', t==='live');
         document.getElementById('tab-vault').classList.toggle('on', t==='vault');
@@ -883,6 +708,9 @@
         document.getElementById('vault-view').style.display = t==='vault' ? 'block' : 'none';
     }
 
+    /* ─────────────────────────────────────────
+       MOBILE
+    ───────────────────────────────────────── */
     function openMobile() {
         document.getElementById('chat-panel').classList.add('open');
         const ov = document.getElementById('overlay');
@@ -897,6 +725,9 @@
         setTimeout(() => ov.style.display = 'none', 260);
     }
 
+    /* ─────────────────────────────────────────
+       SELECT
+    ───────────────────────────────────────── */
     function selectServer(id) {
         sel = (sel === id) ? null : id;
         document.querySelectorAll('.card').forEach(c => c.classList.toggle('on', c.dataset.sid === sel));
@@ -915,6 +746,14 @@
         }, 60);
     }
 
+    function copyId(fullId) {
+        if (!cfg.copyId) return;
+        navigator.clipboard.writeText(fullId).then(() => toast('ID copied!')).catch(() => toast('Copied (clipboard blocked)'));
+    }
+
+    /* ─────────────────────────────────────────
+       PANEL
+    ───────────────────────────────────────── */
     function renderPanel() {
         const body = document.getElementById('chat-body');
         const mode = document.getElementById('panel-mode');
@@ -951,6 +790,9 @@
         return `<div class="empty-state"><div class="es-icon">${icon}</div><div class="es-title">${title}</div><div class="es-sub">${sub}</div></div>`;
     }
 
+    /* ─────────────────────────────────────────
+       REFRESH
+    ───────────────────────────────────────── */
     async function refresh() {
         try {
             const res = await fetch('/list-servers', { headers: { 'x-api-key': apiKey } });
@@ -964,6 +806,12 @@
         document.getElementById('p-count').textContent = servers.reduce((a,[,s]) => a+(s.playerCount||0), 0);
         document.getElementById('a-count').textContent = archives.length;
 
+        // Sound: detect new / dropped servers
+        const currentIds = new Set(servers.map(([id]) => id));
+        currentIds.forEach(id => { if (!prevServerIds.has(id)) beep(660, 90); });
+        prevServerIds.forEach(id => { if (!currentIds.has(id)) beep(300, 120); });
+        prevServerIds = currentIds;
+
         const grid = document.getElementById('server-grid');
         const existing = new Set([...grid.querySelectorAll('.card')].map(e => e.dataset.sid));
         const incoming = new Set(servers.map(([id]) => id));
@@ -974,39 +822,40 @@
         } else {
             grid.querySelector('[style*="grid-column"]')?.remove();
             servers.forEach(([id, s], i) => {
-                const MAX = 5;
                 const players = Array.isArray(s.players) ? s.players : [];
-                const shown   = players.slice(0, MAX);
+                const shown   = players.slice(0, cfg.maxPlayers);
                 const extra   = Math.max(0, (s.playerCount||players.length) - shown.length);
                 const isSel   = sel === id;
+                const shortId = id.substring(0,18) + '…';
 
-                const playerHTML = shown.length
-                    ? shown.map(p => `<div class="p-row"><div class="p-dot"></div><span class="p-name">${esc(p.name||p)}</span></div>`).join('')
-                      + (extra ? `<div class="p-more">+${extra} more</div>` : '')
-                    : `<div class="p-none">${s.playerCount > 0 ? s.playerCount + ' player' + (s.playerCount!==1?'s':'') + ' online' : 'Nobody here yet'}</div>`;
+                const playerSection = cfg.showPlayers ? `
+                    <div class="players">
+                        <div class="players-label">In session</div>
+                        ${shown.length
+                            ? shown.map(p => `<div class="p-row"><div class="p-dot"></div><span class="p-name">${esc(p.name||p)}</span></div>`).join('')
+                              + (extra ? `<div class="p-more">+${extra} more</div>` : '')
+                            : `<div class="p-none">${s.playerCount > 0 ? s.playerCount+' player'+(s.playerCount!==1?'s':'')+' online' : 'Nobody here yet'}</div>`}
+                    </div>` : '';
 
                 let card = document.getElementById('card-'+id);
                 if (!card) {
                     card = document.createElement('div');
-                    card.className = 'card';
                     card.id = 'card-'+id;
                     card.dataset.sid = id;
                     card.style.animationDelay = `${i*35}ms`;
                     grid.appendChild(card);
                 }
-                card.classList.toggle('on', isSel);
-                card.onclick = e => { if (!e.target.closest('.btn')) selectServer(id); };
+                card.className = 'card' + (cfg.compact ? ' compact-card' : '') + (isSel ? ' on' : '');
+                card.onclick = e => { if (!e.target.closest('.btn') && !e.target.closest('.card-id')) selectServer(id); };
+
                 card.innerHTML = `
                     <div class="card-row">
-                        <span class="card-id">${esc(id.substring(0,18))}…</span>
+                        <span class="card-id" title="${esc(id)}" onclick="copyId('${esc(id)}')">${shortId}</span>
                         <span class="badge ${s.isStudio?'badge-studio':'badge-live'}">${s.isStudio?'Studio':'Live'}</span>
                     </div>
                     <div class="big-num">${s.playerCount}</div>
                     <div class="big-label">player${s.playerCount!==1?'s':''} online</div>
-                    <div class="players">
-                        <div class="players-label">In session</div>
-                        ${playerHTML}
-                    </div>
+                    ${playerSection}
                     <div class="card-btns">
                         <button class="btn btn-red" onclick="terminate('${id}')">Terminate</button>
                         <button class="btn btn-ghost" onclick="archiveServer('${id}')">Archive</button>
@@ -1016,6 +865,7 @@
             });
         }
 
+        // Vault
         const arcGrid = document.getElementById('archive-grid');
         arcGrid.innerHTML = '';
         if (!archives.length) {
@@ -1040,37 +890,44 @@
         renderPanel();
     }
 
+    /* ─────────────────────────────────────────
+       HELPERS
+    ───────────────────────────────────────── */
     function esc(s) {
         return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
 
     function downloadTxt(jobId, chats, fileName) {
-        if (!chats?.length) return alert('No logs to export.');
+        if (!chats?.length) return toast('No logs to export');
         let txt = `Nexus Command — Log Export\nInstance: ${jobId}\n${'─'.repeat(44)}\n\n`;
         chats.forEach(c => txt += `[${c.t}]  ${c.msg}\n`);
         Object.assign(document.createElement('a'), {
             href: URL.createObjectURL(new Blob([txt], {type:'text/plain'})),
             download: fileName+'.txt'
         }).click();
+        toast('Download started');
     }
 
     async function archiveServer(id) {
         const name = prompt('Name this archive:');
         if (!name?.trim()) return;
         await fetch('/archive-session', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id,customName:name.trim()}) });
+        toast('Archived: ' + name.trim());
         refresh();
     }
 
     async function terminate(id) {
-        if (!confirm('Terminate this server?')) return;
+        if (cfg.confirmTerminate && !confirm('Terminate this server?')) return;
         await fetch('/kick-server', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id}) });
         if (sel===id) { sel=null; renderPanel(); }
+        toast('Server terminated');
         refresh();
     }
 
     async function deleteArchive(id) {
-        if (!confirm('Permanently purge this archive?')) return;
+        if (cfg.confirmPurge && !confirm('Permanently purge this archive?')) return;
         await fetch('/delete-archive', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({archiveId:id}) });
+        toast('Archive purged');
         refresh();
     }
 </script>
