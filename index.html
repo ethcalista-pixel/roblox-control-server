@@ -2,425 +2,597 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Nexus Command</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #060912;
-            --surface: #0d1117;
-            --surface2: #161b22;
-            --border: rgba(99, 200, 255, 0.1);
-            --border-strong: rgba(99, 200, 255, 0.25);
-            --primary: #63c8ff;
-            --primary-dim: rgba(99, 200, 255, 0.15);
-            --danger: #ff4757;
-            --danger-dim: rgba(255, 71, 87, 0.15);
-            --success: #2ed573;
-            --success-dim: rgba(46, 213, 115, 0.12);
-            --purple: #a78bfa;
-            --purple-dim: rgba(167, 139, 250, 0.15);
-            --warn: #ffa502;
-            --text: #8b9ab5;
-            --text-bright: #dde6f5;
-            --text-dim: #4a5568;
-            --mono: 'JetBrains Mono', monospace;
-            --display: 'Syne', sans-serif;
+            --bg:        #D9D9D7;
+            --s0:        #E4E4E2;
+            --s1:        #EAEAE8;
+            --s2:        #D2D2D0;
+            --s3:        #C8C8C6;
+            --b0:        #BFBFBD;
+            --b1:        #ADADAB;
+            --b2:        #909090;
+            --ink:       #111110;
+            --ink2:      #333331;
+            --ink3:      #666664;
+            --ink4:      #999997;
+            --ink5:      #B8B8B6;
+            --red:       #B52B1E;
+            --red-bg:    rgba(181,43,30,0.09);
+            --green:     #1A7040;
+            --green-bg:  rgba(26,112,64,0.09);
+            --amber:     #A05C00;
+            --amber-bg:  rgba(160,92,0,0.09);
+            --r:         5px;
+            --body:      'Outfit', sans-serif;
+            --mono:      'JetBrains Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; font-family: var(--body); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
 
-        body {
-            font-family: var(--mono);
-            background: var(--bg);
-            color: var(--text);
+        /* ───────────────────────────────
+           AUTH
+        ─────────────────────────────── */
+        #auth-wrap {
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Subtle scanlines overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        /* ─── AUTH ─── */
-        #auth-container {
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 24px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 380px;
+            background: var(--s1);
+            border: 1px solid var(--b0);
+            border-radius: 10px;
+            padding: 44px 36px 36px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.06), 0 12px 40px rgba(0,0,0,.10);
+            animation: up .35s cubic-bezier(.16,1,.3,1);
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo-mark {
+            width: 34px; height: 34px;
+            background: var(--ink);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-logo-mark svg { width: 16px; height: 16px; fill: var(--s1); }
+
+        .auth-logo-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.2px;
+        }
+
+        .auth-logo-sub {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--ink4);
+            margin-top: 1px;
+        }
+
+        .auth-heading {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -.3px;
+            margin-bottom: 6px;
+        }
+
+        .auth-desc {
+            font-size: 13px;
+            color: var(--ink4);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink3);
+            margin-bottom: 7px;
+            display: block;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--s2);
+            border: 1.5px solid var(--b0);
+            border-radius: var(--r);
+            color: var(--ink);
+            font-family: var(--mono);
+            font-size: 13px;
+            letter-spacing: 4px;
+            outline: none;
+            transition: border-color .18s, box-shadow .18s;
+            margin-bottom: 14px;
+        }
+
+        .auth-input::placeholder { letter-spacing: 2px; color: var(--b1); }
+        .auth-input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,16,.09); }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--ink);
+            border: none;
+            border-radius: var(--r);
+            color: var(--s1);
+            font-family: var(--body);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .18s, transform .15s;
+        }
+
+        .auth-btn:hover  { opacity: .85; transform: translateY(-1px); }
+        .auth-btn:active { transform: translateY(0); opacity: .95; }
+
+        /* ───────────────────────────────
+           DASHBOARD
+        ─────────────────────────────── */
+        #dashboard {
+            display: none;
+            flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
-        .auth-box {
-            width: 380px;
-            padding: 50px 40px;
-            background: var(--surface);
-            border: 1px solid var(--border-strong);
-            border-radius: 4px;
+
+        /* TOPBAR */
+        .topbar {
+            height: 52px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 18px;
+            background: var(--s1);
+            border-bottom: 1px solid var(--b0);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .t-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 6px;
+        }
+
+        .t-mark {
+            width: 26px; height: 26px;
+            background: var(--ink);
+            border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .t-mark svg { width: 12px; height: 12px; fill: var(--s1); }
+
+        .t-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.2px;
+        }
+
+        .sep { width: 1px; height: 18px; background: var(--b0); flex-shrink: 0; }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            background: var(--s0);
+            border: 1px solid var(--b0);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--ink3);
+            white-space: nowrap;
+        }
+
+        .stat-pill b { font-weight: 700; color: var(--ink); }
+
+        .pulse {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: breathe 2.5s ease-in-out infinite;
+        }
+
+        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+        .tabs {
+            display: flex;
+            gap: 2px;
+            background: var(--s0);
+            border: 1px solid var(--b0);
+            border-radius: 7px;
+            padding: 3px;
+        }
+
+        .tab {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            background: transparent;
+            font-family: var(--body);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink4);
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .tab.on {
+            background: var(--s1);
+            color: var(--ink);
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+
+        .icon-btn {
+            width: 34px; height: 34px;
+            background: var(--s0);
+            border: 1px solid var(--b0);
+            border-radius: 6px;
+            color: var(--ink3);
+            font-size: 15px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .15s;
+        }
+
+        .icon-btn:hover { background: var(--s2); color: var(--ink); }
+
+        /* ───────────────────────────────
+           WORKSPACE
+        ─────────────────────────────── */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* SERVER PANE */
+        .server-pane {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+        }
+
+        .server-pane::-webkit-scrollbar { width: 5px; }
+        .server-pane::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 3px; }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--ink4);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 12px;
+        }
+
+        /* SERVER CARD */
+        .card {
+            background: var(--s1);
+            border: 1px solid var(--b0);
+            border-radius: 8px;
+            padding: 18px;
+            cursor: pointer;
+            transition: border-color .18s, box-shadow .18s, transform .15s;
+            animation: up .3s cubic-bezier(.16,1,.3,1) both;
             position: relative;
-            animation: fadeUp 0.4s ease;
+            overflow: hidden;
         }
-        .auth-box::before {
+
+        .card::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-        }
-        .auth-title {
-            font-family: var(--display);
-            font-size: 28px;
-            color: var(--text-bright);
-            margin-bottom: 6px;
-            letter-spacing: 1px;
-        }
-        .auth-sub {
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 35px;
-        }
-        .auth-input {
-            width: 100%;
-            padding: 13px 16px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-strong);
-            border-radius: 3px;
-            color: var(--primary);
-            font-family: var(--mono);
-            font-size: 13px;
-            letter-spacing: 4px;
-            margin-bottom: 16px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .auth-input:focus { border-color: var(--primary); }
-        .auth-btn {
-            width: 100%;
-            padding: 13px;
-            background: var(--primary-dim);
-            border: 1px solid var(--primary);
-            border-radius: 3px;
-            color: var(--primary);
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .auth-btn:hover { background: var(--primary); color: var(--bg); }
-
-        /* ─── DASHBOARD ─── */
-        #dashboard { display: none; height: 100vh; flex-direction: column; }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 14px 24px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-        .topbar-logo {
-            font-family: var(--display);
-            font-size: 18px;
-            color: var(--text-bright);
-            letter-spacing: 1px;
-            margin-right: 10px;
-        }
-        .topbar-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--success);
-            box-shadow: 0 0 8px var(--success);
-            animation: pulse 2s infinite;
-        }
-        .stat-pill {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 5px 14px;
-            font-size: 11px;
-            color: var(--text);
-        }
-        .stat-pill span { color: var(--text-bright); font-weight: 700; }
-
-        .nav-tabs { display: flex; gap: 2px; margin-left: auto; }
-        .tab-btn {
-            background: none;
-            border: 1px solid transparent;
-            color: var(--text-dim);
-            padding: 8px 20px;
-            font-family: var(--mono);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-        .tab-btn:hover { color: var(--text); border-color: var(--border); }
-        .tab-btn.active { color: var(--primary); background: var(--primary-dim); border-color: var(--primary); }
-        .logout-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 8px 16px;
-            font-family: var(--mono);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-        .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
-
-        /* ─── MAIN LAYOUT ─── */
-        .workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+            background: transparent;
+            transition: background .2s;
         }
 
-        /* ─── SERVER GRID ─── */
-        .server-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            grid-auto-rows: min-content;
-            gap: 16px;
-            align-content: start;
-        }
-        .server-list::-webkit-scrollbar { width: 4px; }
-        .server-list::-webkit-scrollbar-track { background: transparent; }
-        .server-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
-
-        .server-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 20px;
-            cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
-            position: relative;
-            animation: fadeUp 0.3s ease;
-        }
-        .server-card:hover {
-            border-color: var(--border-strong);
+        .card:hover {
+            border-color: var(--b1);
+            box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
             transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .server-card.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary), 0 0 25px rgba(99, 200, 255, 0.1);
-        }
-        .server-card.highlight-flash {
-            animation: flashCard 3s ease;
         }
 
-        .card-header {
+        .card.on {
+            border-color: var(--ink2);
+            box-shadow: 0 0 0 2px var(--ink2);
+        }
+
+        .card.on::after { background: var(--ink); }
+
+        .card.flash { animation: flashCard 2s ease forwards; }
+
+        .card-row {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
             margin-bottom: 14px;
         }
-        .card-id {
-            font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 1px;
-        }
-        .card-type-badge {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            padding: 3px 8px;
-            border-radius: 2px;
-        }
-        .badge-live { background: var(--success-dim); color: var(--success); border: 1px solid rgba(46,213,115,0.3); }
-        .badge-studio { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
 
-        .card-count {
-            font-family: var(--display);
-            font-size: 42px;
-            color: var(--text-bright);
-            line-height: 1;
-            margin-bottom: 4px;
-        }
-        .card-count-label {
+        .card-id {
+            font-family: var(--mono);
             font-size: 10px;
-            color: var(--text-dim);
-            letter-spacing: 2px;
+            color: var(--ink5);
+            letter-spacing: .3px;
+        }
+
+        .badge {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: .8px;
+            padding: 3px 8px;
+            border-radius: 4px;
             text-transform: uppercase;
+        }
+
+        .badge-live   { background: var(--green-bg); color: var(--green); }
+        .badge-studio { background: var(--amber-bg); color: var(--amber); }
+
+        .big-num {
+            font-size: 52px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--ink);
+            letter-spacing: -2px;
+            margin-bottom: 2px;
+        }
+
+        .big-label {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--ink4);
             margin-bottom: 16px;
         }
 
         /* Player list */
-        .player-list {
-            margin-bottom: 16px;
+        .players {
+            border-top: 1px solid var(--b0);
+            padding-top: 13px;
+            margin-bottom: 14px;
         }
-        .player-list-header {
-            font-size: 9px;
-            letter-spacing: 2px;
+
+        .players-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid var(--border);
+            color: var(--ink5);
+            margin-bottom: 9px;
         }
-        .player-item {
+
+        .p-row {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 4px 0;
-            font-size: 11px;
-            color: var(--text);
-        }
-        .player-dot {
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--success);
-            flex-shrink: 0;
-        }
-        .player-name { color: var(--text-bright); }
-        .player-overflow {
-            font-size: 10px;
-            color: var(--text-dim);
-            padding: 4px 0;
+            padding: 3.5px 0;
         }
 
-        /* Card actions */
-        .card-actions {
+        .p-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+            flex-shrink: 0;
+        }
+
+        .p-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink2);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .p-more { font-size: 11px; color: var(--ink5); padding-top: 3px; }
+        .p-none { font-size: 12px; color: var(--ink5); }
+
+        /* Card buttons */
+        .card-btns {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+            border-top: 1px solid var(--b0);
+            padding-top: 13px;
         }
+
         .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             padding: 6px 12px;
-            border-radius: 3px;
+            border-radius: 5px;
             border: 1px solid transparent;
-            font-size: 10px;
-            font-family: var(--mono);
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            font-family: var(--body);
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all .14s;
+            white-space: nowrap;
         }
-        .btn-danger {
-            background: var(--danger-dim);
-            border-color: rgba(255,71,87,0.3);
-            color: var(--danger);
-        }
-        .btn-danger:hover { background: var(--danger); color: white; }
-        .btn-success {
-            background: var(--success-dim);
-            border-color: rgba(46,213,115,0.3);
-            color: var(--success);
-        }
-        .btn-success:hover { background: var(--success); color: var(--bg); }
+
         .btn-ghost {
-            background: var(--surface2);
-            border-color: var(--border);
-            color: var(--text);
+            background: var(--s0);
+            border-color: var(--b0);
+            color: var(--ink3);
         }
-        .btn-ghost:hover { border-color: var(--border-strong); color: var(--text-bright); }
 
-        /* View chat button */
-        .view-chat-hint {
+        .btn-ghost:hover { background: var(--s2); border-color: var(--b1); color: var(--ink); }
+
+        .btn-dark {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--s1);
+        }
+
+        .btn-dark:hover { opacity: .8; }
+
+        .btn-red {
+            background: var(--red-bg);
+            border-color: rgba(181,43,30,.2);
+            color: var(--red);
+        }
+
+        .btn-red:hover { background: var(--red); border-color: var(--red); color: white; }
+
+        .card-hint {
+            font-family: var(--mono);
             font-size: 9px;
-            color: var(--primary);
-            letter-spacing: 1px;
-            opacity: 0.7;
-            margin-top: 10px;
+            color: var(--ink5);
             text-align: right;
+            margin-top: 9px;
+            letter-spacing: .5px;
         }
 
-        /* ─── RIGHT PANEL ─── */
-        .right-panel {
-            width: 400px;
+        /* ───────────────────────────────
+           CHAT PANEL
+        ─────────────────────────────── */
+        .chat-panel {
+            width: 360px;
             flex-shrink: 0;
-            border-left: 1px solid var(--border);
+            border-left: 1px solid var(--b0);
+            background: var(--s0);
             display: flex;
             flex-direction: column;
-            background: var(--surface);
         }
 
-        .panel-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
+        .panel-head {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--b0);
             flex-shrink: 0;
-        }
-        .panel-title {
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            margin-bottom: 4px;
-        }
-        .panel-subtitle {
-            font-size: 12px;
-            color: var(--text-bright);
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: var(--s1);
         }
 
-        .chat-feed {
+        .panel-mode {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--ink5);
+            margin-bottom: 2px;
+        }
+
+        .panel-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -.2px;
+        }
+
+        .panel-close {
+            display: none;
+            width: 28px; height: 28px;
+            background: var(--s2);
+            border: 1px solid var(--b0);
+            border-radius: 5px;
+            color: var(--ink3);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all .15s;
+        }
+
+        .panel-close:hover { background: var(--s3); color: var(--ink); }
+
+        .chat-body {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-        .chat-feed::-webkit-scrollbar { width: 3px; }
-        .chat-feed::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
 
-        .chat-msg {
+        .chat-body::-webkit-scrollbar { width: 4px; }
+        .chat-body::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 2px; }
+
+        .msg {
             padding: 8px 10px;
-            border-radius: 3px;
-            font-size: 11px;
-            line-height: 1.6;
+            border-radius: 6px;
             border-left: 2px solid transparent;
-            transition: background 0.15s;
+            transition: background .13s;
         }
-        .chat-msg:hover { background: var(--surface2); }
-        .chat-msg.global-entry { border-left-color: var(--primary); }
-        .chat-msg.instance-entry { border-left-color: var(--success); }
+
+        .msg:hover { background: var(--s1); }
+        .msg.g-msg { border-left-color: var(--b2); }
+        .msg.i-msg { border-left-color: var(--green); }
 
         .msg-meta {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 7px;
             margin-bottom: 3px;
         }
-        .msg-server-tag {
+
+        .srv-tag {
+            font-family: var(--mono);
             font-size: 9px;
-            background: var(--primary-dim);
-            color: var(--primary);
-            padding: 1px 6px;
-            border-radius: 2px;
+            font-weight: 500;
+            background: rgba(17,17,16,.07);
+            color: var(--ink2);
+            padding: 2px 6px;
+            border-radius: 3px;
             cursor: pointer;
-            font-weight: 700;
-            letter-spacing: 1px;
+            transition: all .13s;
+            letter-spacing: .5px;
         }
-        .msg-server-tag:hover { background: var(--primary); color: var(--bg); }
+
+        .srv-tag:hover { background: var(--ink); color: var(--s1); }
+
         .msg-time {
+            font-family: var(--mono);
             font-size: 9px;
-            color: var(--text-dim);
+            color: var(--ink5);
         }
-        .msg-text { color: var(--text); font-size: 11px; }
+
+        .msg-text {
+            font-size: 12.5px;
+            color: var(--ink2);
+            line-height: 1.5;
+            word-break: break-word;
+        }
 
         .empty-state {
             flex: 1;
@@ -428,256 +600,355 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            color: var(--text-dim);
-        }
-        .empty-icon {
-            font-size: 32px;
-            opacity: 0.3;
-        }
-        .empty-label {
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            gap: 8px;
+            padding: 40px;
+            text-align: center;
         }
 
-        /* ─── VAULT TAB ─── */
+        .es-icon  { font-size: 28px; opacity: .25; margin-bottom: 4px; }
+        .es-title { font-size: 13px; font-weight: 600; color: var(--ink3); }
+        .es-sub   { font-size: 12px; color: var(--ink5); }
+
+        /* ───────────────────────────────
+           VAULT
+        ─────────────────────────────── */
         #vault-view {
             display: none;
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 18px;
         }
-        #vault-view::-webkit-scrollbar { width: 4px; }
-        #vault-view::-webkit-scrollbar-thumb { background: var(--border-strong); }
+
+        #vault-view::-webkit-scrollbar { width: 5px; }
+        #vault-view::-webkit-scrollbar-thumb { background: var(--b1); border-radius: 3px; }
 
         .vault-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: 16px;
-            align-content: start;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 12px;
         }
 
-        .archive-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 20px;
-            animation: fadeUp 0.3s ease;
+        .arc-card {
+            background: var(--s1);
+            border: 1px solid var(--b0);
+            border-radius: 8px;
+            padding: 18px;
+            animation: up .3s cubic-bezier(.16,1,.3,1) both;
         }
-        .archive-card-header {
+
+        .arc-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
-        .archive-name {
-            font-family: var(--display);
-            font-size: 18px;
-            color: var(--text-bright);
+
+        .arc-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -.2px;
         }
-        .archive-actions { display: flex; gap: 6px; }
-        .archive-log {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            padding: 12px;
-            height: 160px;
+
+        .arc-btns { display: flex; gap: 6px; flex-shrink: 0; }
+
+        .arc-log {
+            background: var(--s2);
+            border: 1px solid var(--b0);
+            border-radius: 5px;
+            padding: 11px 12px;
+            height: 155px;
             overflow-y: auto;
+            font-family: var(--mono);
             font-size: 10px;
-            line-height: 1.8;
-            color: var(--text-dim);
-        }
-        .archive-log::-webkit-scrollbar { width: 3px; }
-        .archive-log::-webkit-scrollbar-thumb { background: var(--border-strong); }
-
-        /* ─── ANIMATIONS ─── */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        @keyframes flashCard {
-            0%, 100% { border-color: var(--border); box-shadow: none; }
-            10%, 50% { border-color: var(--primary); box-shadow: 0 0 20px rgba(99,200,255,0.25); }
+            line-height: 1.85;
+            color: var(--ink3);
         }
 
-        /* Vault empty */
-        .vault-empty {
+        .arc-log::-webkit-scrollbar { width: 3px; }
+        .arc-log::-webkit-scrollbar-thumb { background: var(--b1); }
+        .arc-t { color: var(--ink5); }
+
+        .empty-grid {
             grid-column: 1/-1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 80px 0;
-            color: var(--text-dim);
+            padding: 70px 0;
+            gap: 8px;
         }
-        .vault-empty .empty-icon { font-size: 40px; opacity: 0.2; }
-        .vault-empty .empty-label { font-size: 11px; letter-spacing: 3px; }
+
+        /* ───────────────────────────────
+           MOBILE
+        ─────────────────────────────── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(17,17,16,.3);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity .25s;
+        }
+
+        .overlay.show { opacity: 1; }
+
+        .fab {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--ink);
+            color: var(--s1);
+            border: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,.18);
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            z-index: 150;
+            transition: transform .15s;
+        }
+
+        .fab:active { transform: scale(.93); }
+
+        /* ───────────────────────────────
+           ANIMATIONS
+        ─────────────────────────────── */
+        @keyframes up {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: .35; }
+        }
+
+        @keyframes flashCard {
+            0%   { border-color: var(--b0); box-shadow: none; }
+            15%  { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+            70%  { border-color: var(--b1); box-shadow: 0 0 0 1px var(--b1); }
+            100% { border-color: var(--b0); box-shadow: none; }
+        }
+
+        /* ───────────────────────────────
+           RESPONSIVE
+        ─────────────────────────────── */
+        @media (max-width: 1024px) {
+            .chat-panel { width: 310px; }
+        }
+
+        @media (max-width: 768px) {
+            .topbar { padding: 0 14px; gap: 8px; }
+            .stat-pill.xs-hide { display: none; }
+            .sep { display: none; }
+
+            .server-pane { padding: 14px; }
+            .grid { grid-template-columns: 1fr; }
+
+            .chat-panel {
+                position: fixed;
+                inset: auto 0 0 0;
+                width: 100%;
+                height: 68vh;
+                border-left: none;
+                border-top: 1.5px solid var(--b0);
+                border-radius: 14px 14px 0 0;
+                box-shadow: 0 -6px 30px rgba(0,0,0,.12);
+                transform: translateY(100%);
+                transition: transform .3s cubic-bezier(.16,1,.3,1);
+                z-index: 200;
+            }
+
+            .chat-panel.open { transform: translateY(0); }
+            .panel-close { display: flex; }
+            .overlay { display: block; }
+            .fab { display: flex; }
+
+            #vault-view { padding: 14px; }
+            .vault-grid { grid-template-columns: 1fr; }
+            .arc-top { flex-wrap: wrap; }
+        }
+
+        @media (max-width: 420px) {
+            .auth-card { padding: 32px 22px 28px; }
+            .big-num { font-size: 44px; }
+        }
     </style>
 </head>
 <body>
 
 <!-- AUTH -->
-<div id="auth-container">
-    <div class="auth-box">
-        <div class="auth-title">Nexus Command</div>
-        <div class="auth-sub">Secure Operations Center</div>
-        <input class="auth-input" type="password" id="key-input" placeholder="••••••••••••" autocomplete="off">
-        <button class="auth-btn" onclick="login()">Authorize Access</button>
+<div id="auth-wrap">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="auth-logo-mark">
+                <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+            </div>
+            <div>
+                <div class="auth-logo-name">Nexus</div>
+                <div class="auth-logo-sub">Command Center</div>
+            </div>
+        </div>
+        <div class="auth-heading">Sign in</div>
+        <div class="auth-desc">Enter your system key to access the dashboard.</div>
+        <label class="field-label" for="key-input">System Key</label>
+        <input class="auth-input" type="password" id="key-input" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+        <button class="auth-btn" onclick="login()">Continue →</button>
     </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard">
-
-    <!-- TOP BAR -->
     <div class="topbar">
-        <span class="topbar-dot"></span>
-        <span class="topbar-logo">Nexus</span>
-
-        <div class="stat-pill" id="stat-servers">Servers <span id="s-count">0</span></div>
-        <div class="stat-pill" id="stat-players">Players <span id="p-count">0</span></div>
-        <div class="stat-pill" id="stat-archives">Archives <span id="a-count">0</span></div>
-
-        <div class="nav-tabs" style="margin-left: auto;">
-            <button class="tab-btn active" id="tab-live" onclick="switchTab('live')">Live Monitor</button>
-            <button class="tab-btn" id="tab-vault" onclick="switchTab('vault')">Vault</button>
+        <div class="t-logo">
+            <div class="t-mark">
+                <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+            </div>
+            <span class="t-name">Nexus</span>
         </div>
-        <button class="logout-btn" onclick="location.reload()">Logout</button>
+        <div class="sep"></div>
+        <div class="stat-pill"><div class="pulse"></div><b id="s-count">0</b> servers</div>
+        <div class="stat-pill xs-hide"><b id="p-count">0</b> players</div>
+        <div class="stat-pill xs-hide"><b id="a-count">0</b> archived</div>
+        <div class="topbar-right">
+            <div class="tabs">
+                <button class="tab on" id="tab-live" onclick="switchTab('live')">Live</button>
+                <button class="tab" id="tab-vault" onclick="switchTab('vault')">Vault</button>
+            </div>
+            <button class="icon-btn" title="Log out" onclick="location.reload()">⏻</button>
+        </div>
     </div>
 
-    <!-- LIVE VIEW -->
     <div id="live-view" class="workspace">
-        <div class="server-list" id="server-grid"></div>
-
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-            <div class="panel-header">
-                <div class="panel-title" id="panel-mode-label">Global Feed</div>
-                <div class="panel-subtitle" id="panel-instance-label">All Instances</div>
+        <div class="server-pane">
+            <div class="section-head">
+                <span class="section-title">Active Instances</span>
             </div>
-            <div class="chat-feed" id="chat-panel">
+            <div class="grid" id="server-grid">
+                <div style="grid-column:1/-1;padding:64px 0;text-align:center;">
+                    <div class="es-icon">◌</div>
+                    <div class="es-title">Connecting…</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-panel" id="chat-panel">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-mode" id="panel-mode">Global Feed</div>
+                    <div class="panel-name" id="panel-name">All Instances</div>
+                </div>
+                <button class="panel-close" onclick="closeMobile()">✕</button>
+            </div>
+            <div class="chat-body" id="chat-body">
                 <div class="empty-state">
-                    <div class="empty-icon">◈</div>
-                    <div class="empty-label">Loading feed...</div>
+                    <div class="es-icon">◌</div>
+                    <div class="es-title">Waiting for messages</div>
+                    <div class="es-sub">Activity will show up here</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- VAULT VIEW -->
     <div id="vault-view">
         <div class="vault-grid" id="archive-grid"></div>
     </div>
-
 </div>
 
+<div class="overlay" id="overlay" onclick="closeMobile()"></div>
+<button class="fab" id="fab" onclick="openMobile()">💬</button>
+
 <script>
-    let apiKey = "";
-    let masterData = { servers: {}, global: [], archives: {} };
-    let selectedServer = null; // null = global feed
+    let apiKey = "", masterData = { servers:{}, global:[], archives:{} }, sel = null;
 
     function login() {
-        apiKey = document.getElementById('key-input').value;
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'flex';
-        document.getElementById('dashboard').style.flexDirection = 'column';
+        apiKey = document.getElementById('key-input').value.trim();
+        if (!apiKey) return;
+        document.getElementById('auth-wrap').style.display = 'none';
+        const d = document.getElementById('dashboard');
+        d.style.display = 'flex';
         refresh();
         setInterval(refresh, 3000);
     }
 
     function switchTab(t) {
-        document.getElementById('tab-live').classList.toggle('active', t === 'live');
-        document.getElementById('tab-vault').classList.toggle('active', t === 'vault');
-        document.getElementById('live-view').style.display = t === 'live' ? 'flex' : 'none';
-        document.getElementById('vault-view').style.display = t === 'live' ? 'none' : 'block';
+        document.getElementById('tab-live').classList.toggle('on', t==='live');
+        document.getElementById('tab-vault').classList.toggle('on', t==='vault');
+        document.getElementById('live-view').style.display  = t==='live'  ? 'flex'  : 'none';
+        document.getElementById('vault-view').style.display = t==='vault' ? 'block' : 'none';
+    }
+
+    function openMobile() {
+        document.getElementById('chat-panel').classList.add('open');
+        const ov = document.getElementById('overlay');
+        ov.style.display = 'block';
+        requestAnimationFrame(() => ov.classList.add('show'));
+    }
+
+    function closeMobile() {
+        document.getElementById('chat-panel').classList.remove('open');
+        const ov = document.getElementById('overlay');
+        ov.classList.remove('show');
+        setTimeout(() => ov.style.display = 'none', 260);
     }
 
     function selectServer(id) {
-        selectedServer = (selectedServer === id) ? null : id; // toggle
+        sel = (sel === id) ? null : id;
+        document.querySelectorAll('.card').forEach(c => c.classList.toggle('on', c.dataset.sid === sel));
         renderPanel();
-        // update card selection highlight
-        document.querySelectorAll('.server-card').forEach(c => c.classList.remove('selected'));
-        if (selectedServer) {
-            const el = document.getElementById('card-' + selectedServer);
-            if (el) el.classList.add('selected');
-        }
-    }
-
-    function renderPanel() {
-        const panel = document.getElementById('chat-panel');
-        const modeLabel = document.getElementById('panel-mode-label');
-        const instanceLabel = document.getElementById('panel-instance-label');
-
-        if (!selectedServer || !masterData.servers[selectedServer]) {
-            // Global feed
-            modeLabel.textContent = 'Global Feed';
-            instanceLabel.textContent = 'All Instances';
-            const msgs = masterData.global || [];
-            if (msgs.length === 0) {
-                panel.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-label">No activity yet</div></div>`;
-                return;
-            }
-            panel.innerHTML = msgs.slice().reverse().map(c => `
-                <div class="chat-msg global-entry">
-                    <div class="msg-meta">
-                        <span class="msg-server-tag" onclick="scrollToServer('${c.jobId}')">${c.jobId.substring(0,8)}</span>
-                        <span class="msg-time">${c.t}</span>
-                    </div>
-                    <div class="msg-text">${escHtml(c.msg)}</div>
-                </div>
-            `).join('');
-        } else {
-            // Instance-specific chat
-            const s = masterData.servers[selectedServer];
-            const shortId = selectedServer.substring(0, 8);
-            modeLabel.textContent = 'Instance Feed';
-            instanceLabel.textContent = shortId + (s.isStudio ? ' · Studio' : ' · Live') + ' · ' + s.playerCount + ' player' + (s.playerCount !== 1 ? 's' : '');
-
-            const msgs = s.chats || [];
-            if (msgs.length === 0) {
-                panel.innerHTML = `<div class="empty-state"><div class="empty-icon">◈</div><div class="empty-label">No logs for this instance</div></div>`;
-                return;
-            }
-            panel.innerHTML = msgs.slice().reverse().map(c => `
-                <div class="chat-msg instance-entry">
-                    <div class="msg-meta">
-                        <span class="msg-time">${c.t}</span>
-                    </div>
-                    <div class="msg-text">${escHtml(c.msg)}</div>
-                </div>
-            `).join('');
-        }
+        if (sel && window.innerWidth <= 768) openMobile();
     }
 
     function scrollToServer(id) {
         switchTab('live');
         setTimeout(() => {
             const el = document.getElementById('card-' + id);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                el.classList.add('highlight-flash');
-                setTimeout(() => el.classList.remove('highlight-flash'), 3000);
-            }
-        }, 50);
+            if (!el) return;
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('flash');
+            setTimeout(() => el.classList.remove('flash'), 2000);
+        }, 60);
     }
 
-    function escHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function renderPanel() {
+        const body = document.getElementById('chat-body');
+        const mode = document.getElementById('panel-mode');
+        const name = document.getElementById('panel-name');
+
+        if (!sel || !masterData.servers[sel]) {
+            mode.textContent = 'Global Feed';
+            name.textContent = 'All Instances';
+            const msgs = masterData.global || [];
+            if (!msgs.length) { body.innerHTML = emptyHTML('◌','No activity yet','Messages will show up here'); return; }
+            body.innerHTML = [...msgs].reverse().map(c => `
+                <div class="msg g-msg">
+                    <div class="msg-meta">
+                        <span class="srv-tag" onclick="scrollToServer('${esc(c.jobId)}')">${esc(c.jobId.substring(0,8))}</span>
+                        <span class="msg-time">${esc(c.t)}</span>
+                    </div>
+                    <div class="msg-text">${esc(c.msg)}</div>
+                </div>`).join('');
+        } else {
+            const s = masterData.servers[sel];
+            mode.textContent = 'Instance';
+            name.textContent = sel.substring(0,14) + '…';
+            const msgs = s.chats || [];
+            if (!msgs.length) { body.innerHTML = emptyHTML('◌','No logs yet','Chat will appear as players talk'); return; }
+            body.innerHTML = [...msgs].reverse().map(c => `
+                <div class="msg i-msg">
+                    <div class="msg-meta"><span class="msg-time">${esc(c.t)}</span></div>
+                    <div class="msg-text">${esc(c.msg)}</div>
+                </div>`).join('');
+        }
     }
 
-    function downloadTxt(jobId, chatArray, fileName) {
-        if (!chatArray || chatArray.length === 0) return alert("No logs to download.");
-        let content = `Nexus Command Log Export\nInstance: ${jobId}\n${'─'.repeat(40)}\n\n`;
-        chatArray.forEach(c => content += `[${c.t}] ${c.msg}\n`);
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `${fileName}.txt`; a.click();
+    function emptyHTML(icon, title, sub) {
+        return `<div class="empty-state"><div class="es-icon">${icon}</div><div class="es-title">${title}</div><div class="es-sub">${sub}</div></div>`;
     }
 
     async function refresh() {
@@ -687,139 +958,119 @@
             masterData = await res.json();
         } catch(e) { return; }
 
-        // Update stat pills
-        const servers = Object.entries(masterData.servers || {});
-        let totalPlayers = servers.reduce((acc, [, s]) => acc + (s.playerCount || 0), 0);
-        document.getElementById('s-count').textContent = servers.length;
-        document.getElementById('p-count').textContent = totalPlayers;
-        document.getElementById('a-count').textContent = Object.keys(masterData.archives || {}).length;
-
-        // Render server cards
-        const grid = document.getElementById('server-grid');
-        const existingIds = new Set([...grid.querySelectorAll('.server-card')].map(el => el.dataset.sid));
-        const incomingIds = new Set(servers.map(([id]) => id));
-
-        // Remove cards no longer present
-        existingIds.forEach(id => { if (!incomingIds.has(id)) document.getElementById('card-' + id)?.remove(); });
-
-        servers.forEach(([id, s]) => {
-            const MAX_SHOWN = 5;
-            const players = s.players || [];
-            const shownPlayers = players.slice(0, MAX_SHOWN);
-            const extraCount = Math.max(0, (s.playerCount || players.length) - shownPlayers.length);
-
-            const playerListHtml = shownPlayers.length > 0 ? `
-                <div class="player-list">
-                    <div class="player-list-header">Online Players</div>
-                    ${shownPlayers.map(p => `
-                        <div class="player-item">
-                            <div class="player-dot"></div>
-                            <span class="player-name">${escHtml(p.name || p)}</span>
-                        </div>
-                    `).join('')}
-                    ${extraCount > 0 ? `<div class="player-overflow">+${extraCount} more</div>` : ''}
-                </div>
-            ` : `
-                <div class="player-list">
-                    <div class="player-list-header">Online Players</div>
-                    <div class="player-overflow" style="padding:6px 0;">
-                        ${s.playerCount > 0 ? s.playerCount + ' player' + (s.playerCount !== 1 ? 's' : '') + ' online' : 'No players'}
-                    </div>
-                </div>
-            `;
-
-            const isSelected = selectedServer === id;
-
-            let card = document.getElementById('card-' + id);
-            if (!card) {
-                card = document.createElement('div');
-                card.className = 'server-card';
-                card.id = 'card-' + id;
-                card.dataset.sid = id;
-                grid.appendChild(card);
-            }
-            if (isSelected) card.classList.add('selected'); else card.classList.remove('selected');
-
-            card.onclick = (e) => {
-                // Don't trigger select if clicking a button
-                if (e.target.closest('.btn')) return;
-                selectServer(id);
-            };
-
-            card.innerHTML = `
-                <div class="card-header">
-                    <div class="card-id">${id.substring(0, 16)}…</div>
-                    <div class="card-type-badge ${s.isStudio ? 'badge-studio' : 'badge-live'}">${s.isStudio ? 'STUDIO' : 'LIVE'}</div>
-                </div>
-                <div class="card-count">${s.playerCount}</div>
-                <div class="card-count-label">Users Online</div>
-                ${playerListHtml}
-                <div class="card-actions">
-                    <button class="btn btn-danger" onclick="terminate('${id}')">Terminate</button>
-                    <button class="btn btn-success" onclick="archiveServer('${id}')">Archive</button>
-                    <button class="btn btn-ghost" onclick="downloadTxt('${id}', masterData.servers['${id}'].chats, 'Log_${id.substring(0,8)}')">Download</button>
-                </div>
-                <div class="view-chat-hint">${isSelected ? '▲ Viewing logs' : '▼ Click to view logs'}</div>
-            `;
-        });
-
-        // Render archive vault
-        const arcGrid = document.getElementById('archive-grid');
-        arcGrid.innerHTML = '';
+        const servers  = Object.entries(masterData.servers  || {});
         const archives = Object.entries(masterData.archives || {});
-        if (archives.length === 0) {
-            arcGrid.innerHTML = `<div class="vault-empty"><div class="empty-icon">◫</div><div class="empty-label">No archives yet</div></div>`;
+        document.getElementById('s-count').textContent = servers.length;
+        document.getElementById('p-count').textContent = servers.reduce((a,[,s]) => a+(s.playerCount||0), 0);
+        document.getElementById('a-count').textContent = archives.length;
+
+        const grid = document.getElementById('server-grid');
+        const existing = new Set([...grid.querySelectorAll('.card')].map(e => e.dataset.sid));
+        const incoming = new Set(servers.map(([id]) => id));
+        existing.forEach(id => { if (!incoming.has(id)) document.getElementById('card-'+id)?.remove(); });
+
+        if (!servers.length) {
+            grid.innerHTML = `<div style="grid-column:1/-1;padding:64px 0;text-align:center;"><div class="es-icon">◌</div><div class="es-title">No active servers</div><div class="es-sub">Waiting for instances to connect</div></div>`;
         } else {
-            archives.forEach(([id, a]) => {
-                const div = document.createElement('div');
-                div.className = 'archive-card';
-                div.innerHTML = `
-                    <div class="archive-card-header">
-                        <div class="archive-name">${escHtml(a.name)}</div>
-                        <div class="archive-actions">
-                            <button class="btn btn-ghost" onclick="downloadTxt('${a.jobId}', masterData.archives['${id}'].chats, 'Archive_${escHtml(a.name)}')">Download</button>
-                            <button class="btn btn-danger" onclick="deleteArchive('${id}')">Purge</button>
-                        </div>
+            grid.querySelector('[style*="grid-column"]')?.remove();
+            servers.forEach(([id, s], i) => {
+                const MAX = 5;
+                const players = Array.isArray(s.players) ? s.players : [];
+                const shown   = players.slice(0, MAX);
+                const extra   = Math.max(0, (s.playerCount||players.length) - shown.length);
+                const isSel   = sel === id;
+
+                const playerHTML = shown.length
+                    ? shown.map(p => `<div class="p-row"><div class="p-dot"></div><span class="p-name">${esc(p.name||p)}</span></div>`).join('')
+                      + (extra ? `<div class="p-more">+${extra} more</div>` : '')
+                    : `<div class="p-none">${s.playerCount > 0 ? s.playerCount + ' player' + (s.playerCount!==1?'s':'') + ' online' : 'Nobody here yet'}</div>`;
+
+                let card = document.getElementById('card-'+id);
+                if (!card) {
+                    card = document.createElement('div');
+                    card.className = 'card';
+                    card.id = 'card-'+id;
+                    card.dataset.sid = id;
+                    card.style.animationDelay = `${i*35}ms`;
+                    grid.appendChild(card);
+                }
+                card.classList.toggle('on', isSel);
+                card.onclick = e => { if (!e.target.closest('.btn')) selectServer(id); };
+                card.innerHTML = `
+                    <div class="card-row">
+                        <span class="card-id">${esc(id.substring(0,18))}…</span>
+                        <span class="badge ${s.isStudio?'badge-studio':'badge-live'}">${s.isStudio?'Studio':'Live'}</span>
                     </div>
-                    <div class="archive-log">
-                        ${(a.chats || []).map(c => `<div><span style="color:var(--text-dim)">[${c.t}]</span> ${escHtml(c.msg)}</div>`).join('') || '<span style="opacity:0.4">No logs</span>'}
+                    <div class="big-num">${s.playerCount}</div>
+                    <div class="big-label">player${s.playerCount!==1?'s':''} online</div>
+                    <div class="players">
+                        <div class="players-label">In session</div>
+                        ${playerHTML}
                     </div>
-                `;
-                arcGrid.appendChild(div);
+                    <div class="card-btns">
+                        <button class="btn btn-red" onclick="terminate('${id}')">Terminate</button>
+                        <button class="btn btn-ghost" onclick="archiveServer('${id}')">Archive</button>
+                        <button class="btn btn-ghost" onclick="downloadTxt('${id}',masterData.servers['${id}'].chats,'Log_${id.substring(0,8)}')">Download</button>
+                    </div>
+                    <div class="card-hint">${isSel ? '▲ viewing logs' : '▼ tap to view logs'}</div>`;
             });
         }
 
-        // Re-render panel if viewing an instance that might have new messages
+        const arcGrid = document.getElementById('archive-grid');
+        arcGrid.innerHTML = '';
+        if (!archives.length) {
+            arcGrid.innerHTML = `<div class="empty-grid"><div class="es-icon" style="font-size:28px;opacity:.25">◫</div><div class="es-title">No archives yet</div><div class="es-sub">Archive a live session to save its logs</div></div>`;
+        } else {
+            archives.forEach(([id, a]) => {
+                const d = document.createElement('div');
+                d.className = 'arc-card';
+                d.innerHTML = `
+                    <div class="arc-top">
+                        <div class="arc-name">${esc(a.name)}</div>
+                        <div class="arc-btns">
+                            <button class="btn btn-ghost" onclick="downloadTxt('${a.jobId}',masterData.archives['${id}'].chats,'Archive_${esc(a.name)}')">Download</button>
+                            <button class="btn btn-red" onclick="deleteArchive('${id}')">Purge</button>
+                        </div>
+                    </div>
+                    <div class="arc-log">${(a.chats||[]).map(c=>`<div><span class="arc-t">[${esc(c.t)}]</span> ${esc(c.msg)}</div>`).join('')||'<span style="opacity:.4">No logs</span>'}</div>`;
+                arcGrid.appendChild(d);
+            });
+        }
+
         renderPanel();
     }
 
+    function esc(s) {
+        return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function downloadTxt(jobId, chats, fileName) {
+        if (!chats?.length) return alert('No logs to export.');
+        let txt = `Nexus Command — Log Export\nInstance: ${jobId}\n${'─'.repeat(44)}\n\n`;
+        chats.forEach(c => txt += `[${c.t}]  ${c.msg}\n`);
+        Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(new Blob([txt], {type:'text/plain'})),
+            download: fileName+'.txt'
+        }).click();
+    }
+
     async function archiveServer(id) {
-        const name = prompt("Name this archive:");
-        if (!name) return;
-        await fetch('/archive-session', {
-            method: 'POST',
-            headers: { 'x-api-key': apiKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jobId: id, customName: name })
-        });
+        const name = prompt('Name this archive:');
+        if (!name?.trim()) return;
+        await fetch('/archive-session', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id,customName:name.trim()}) });
+        refresh();
     }
 
     async function terminate(id) {
-        await fetch('/kick-server', {
-            method: 'POST',
-            headers: { 'x-api-key': apiKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ jobId: id })
-        });
-        if (selectedServer === id) { selectedServer = null; renderPanel(); }
+        if (!confirm('Terminate this server?')) return;
+        await fetch('/kick-server', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id}) });
+        if (sel===id) { sel=null; renderPanel(); }
         refresh();
     }
 
     async function deleteArchive(id) {
-        if (!confirm("Purge this archive? This cannot be undone.")) return;
-        await fetch('/delete-archive', {
-            method: 'POST',
-            headers: { 'x-api-key': apiKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ archiveId: id })
-        });
+        if (!confirm('Permanently purge this archive?')) return;
+        await fetch('/delete-archive', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({archiveId:id}) });
         refresh();
     }
 </script>
