@@ -10,23 +10,33 @@ let globalChat = [];
 let archivedSessions = {};
 const API_KEY = process.env.API_KEY;
 
+// ─── 24-HOUR CHAT CLEAR ───────────────────────────────────────────────────────
+setInterval(() => {
+    globalChat = [];
+    for (let id in activeServers) {
+        activeServers[id].chats = [];
+    }
+    console.log(`[${new Date().toLocaleString()}] 24h chat clear executed.`);
+}, 24 * 60 * 60 * 1000);
+// ─────────────────────────────────────────────────────────────────────────────
+
 // Serve the Dashboard
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 // 1. ROBLOX POLL & CHAT RECEIVER
 app.post(`/poll/${API_KEY}`, (req, res) => {
     let { jobId, playerCount, isStudio, packets } = req.body;
-    
+
     // If JobId is missing, ignore (prevents empty cards)
     if (!jobId || jobId === "") return res.status(400).send("Missing JobId");
 
     // DEDUPLICATION: If server exists, update it. If not, create it.
     if (!activeServers[jobId]) {
-        activeServers[jobId] = { 
-            shouldKick: false, 
-            chats: [], 
-            isStudio: isStudio || false, 
-            startTime: new Date().toLocaleString() 
+        activeServers[jobId] = {
+            shouldKick: false,
+            chats: [],
+            isStudio: isStudio || false,
+            startTime: new Date().toLocaleString()
         };
     }
 
@@ -54,13 +64,13 @@ app.post(`/poll/${API_KEY}`, (req, res) => {
 // 2. ADMIN: List all data for Dashboard
 app.get('/list-servers', (req, res) => {
     if (req.headers['x-api-key'] !== API_KEY) return res.status(401).send();
-    
+
     // Auto-delete servers that haven't talked in 20 seconds
     const now = Date.now();
     for (let id in activeServers) {
         if (now - activeServers[id].lastSeen > 20000) delete activeServers[id];
     }
-    
+
     res.json({ servers: activeServers, global: globalChat, archives: archivedSessions });
 });
 
