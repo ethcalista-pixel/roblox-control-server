@@ -375,7 +375,10 @@
         <div class="server-pane">
             <div class="section-head">
                 <span class="section-title">Active Instances</span>
-                <span class="refresh-badge" id="paused-badge">⏸ Paused</span>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="refresh-badge" id="paused-badge">⏸ Paused</span>
+                    <button class="btn btn-red" id="terminate-all-btn" onclick="terminateAll()" style="display:none;font-size:11px;padding:4px 11px">Terminate All</button>
+                </div>
             </div>
             <div class="grid" id="server-grid">
                 <div style="grid-column:1/-1;padding:64px 0;text-align:center;">
@@ -919,6 +922,7 @@
         document.getElementById('s-count').textContent = servers.length;
         document.getElementById('p-count').textContent = servers.reduce((a,[,s]) => a+(s.playerCount||0), 0);
         document.getElementById('a-count').textContent = archives.length;
+        document.getElementById('terminate-all-btn').style.display = servers.length > 1 ? '' : 'none';
 
         // Detect new / dropped servers → notify + sound
         const currentIds = new Set(servers.map(([id]) => id));
@@ -1037,6 +1041,19 @@
         if (!name?.trim()) return;
         await fetch('/archive-session', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id,customName:name.trim()}) });
         toast('Archived: ' + name.trim());
+        refresh();
+    }
+
+    async function terminateAll() {
+        const servers = Object.keys(masterData.servers || {});
+        if (!servers.length) return;
+        if (!confirm(`Terminate all ${servers.length} server${servers.length !== 1 ? 's' : ''}? This cannot be undone.`)) return;
+        await Promise.all(servers.map(id =>
+            fetch('/kick-server', { method:'POST', headers:{'x-api-key':apiKey,'Content-Type':'application/json'}, body:JSON.stringify({jobId:id}) })
+        ));
+        sel = null;
+        renderPanel();
+        toast(`Terminated ${servers.length} server${servers.length !== 1 ? 's' : ''}`);
         refresh();
     }
 
