@@ -80,8 +80,60 @@
         .refresh-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--amber-bg);color:var(--amber);border:1px solid rgba(160,92,0,.2);display:none}
         .refresh-badge.show{display:inline-flex;align-items:center;gap:5px}
 
-        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
-        .grid.compact{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--card-min,290px),1fr));gap:12px}
+
+        /* ── NOTIFICATION BAR ─────────────── */
+        #notif-bar{
+            flex-shrink:0;overflow:hidden;
+            display:flex;flex-direction:column;gap:0;
+            max-height:0;transition:max-height .3s ease;
+        }
+        #notif-bar.has-items{max-height:500px}
+        .notif{
+            display:flex;align-items:center;gap:10px;
+            padding:8px 18px;font-size:12px;font-weight:500;
+            border-bottom:1px solid var(--b0);
+            animation:slideDown .25s cubic-bezier(.16,1,.3,1);
+            position:relative;
+        }
+        .notif.notif-connect   {background:rgba(26,112,64,.07);color:var(--green)}
+        .notif.notif-disconnect{background:rgba(181,43,30,.07);color:var(--red)}
+        .notif-icon{font-size:14px;flex-shrink:0}
+        .notif-text{flex:1;color:var(--ink2)}
+        .notif-text b{font-weight:700;color:var(--ink)}
+        .notif-time{font-family:var(--mono);font-size:10px;color:var(--ink5);flex-shrink:0}
+        .notif-close{
+            width:20px;height:20px;border:none;background:transparent;
+            color:var(--ink4);cursor:pointer;font-size:14px;line-height:1;
+            display:flex;align-items:center;justify-content:center;
+            border-radius:3px;transition:all .13s;flex-shrink:0;padding:0;
+        }
+        .notif-close:hover{background:var(--s3);color:var(--ink)}
+
+        /* ── SLIDER ───────────────────────── */
+        .sd-slider-row{padding:12px 0;border-bottom:1px solid var(--b0)}
+        .sd-slider-row:last-child{border-bottom:none}
+        .sd-slider-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+        .sd-slider-label{font-size:13px;font-weight:600;color:var(--ink)}
+        .sd-slider-sub{font-size:11px;color:var(--ink4)}
+        .sd-slider-val{font-family:var(--mono);font-size:11px;color:var(--ink3);background:var(--s2);border:1px solid var(--b0);border-radius:4px;padding:2px 7px}
+        input[type=range].nx-range{
+            width:100%;height:4px;
+            -webkit-appearance:none;appearance:none;
+            background:var(--b0);border-radius:2px;outline:none;cursor:pointer;
+            transition:background .2s;
+        }
+        input[type=range].nx-range::-webkit-slider-thumb{
+            -webkit-appearance:none;appearance:none;
+            width:16px;height:16px;border-radius:50%;
+            background:var(--ink);cursor:pointer;
+            box-shadow:0 1px 3px rgba(0,0,0,.2);
+            transition:transform .15s;
+        }
+        input[type=range].nx-range::-webkit-slider-thumb:hover{transform:scale(1.2)}
+        input[type=range].nx-range::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);cursor:pointer;border:none;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+        @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
         /* SERVER CARD */
         .card{background:var(--s1);border:1px solid var(--b0);border-radius:8px;padding:18px;cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .15s;animation:up .3s cubic-bezier(.16,1,.3,1) both;position:relative;overflow:hidden}
@@ -315,6 +367,9 @@
         </div>
     </div>
 
+    <!-- NOTIFICATION BAR -->
+    <div id="notif-bar"></div>
+
     <!-- LIVE VIEW -->
     <div id="live-view" class="workspace">
         <div class="server-pane">
@@ -374,12 +429,15 @@
                 <label class="toggle"><input type="checkbox" id="s-darkmode" onchange="applyDarkMode(this.checked)"><span class="toggle-track"></span></label>
             </div>
 
-            <div class="sd-row">
-                <div class="sd-row-info">
-                    <div class="sd-row-label">Compact cards</div>
-                    <div class="sd-row-sub">Smaller cards, denser grid</div>
+            <div class="sd-slider-row">
+                <div class="sd-slider-head">
+                    <div>
+                        <div class="sd-slider-label">Card size</div>
+                        <div class="sd-slider-sub">Adjust the width of server cards</div>
+                    </div>
+                    <span class="sd-slider-val" id="s-cardsize-val">M</span>
                 </div>
-                <label class="toggle"><input type="checkbox" id="s-compact" onchange="applyCompact(this.checked)"><span class="toggle-track"></span></label>
+                <input type="range" class="nx-range" id="s-cardsize" min="1" max="5" step="1" value="3" oninput="applyCardSize(+this.value)">
             </div>
 
             <div class="sd-row">
@@ -446,6 +504,14 @@
 
             <div class="sd-row">
                 <div class="sd-row-info">
+                    <div class="sd-row-label">Connection notifications</div>
+                    <div class="sd-row-sub">Bar alert on server connect/disconnect</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="s-notifs" checked onchange="cfg.notifs=this.checked;save()"><span class="toggle-track"></span></label>
+            </div>
+
+            <div class="sd-row">
+                <div class="sd-row-info">
                     <div class="sd-row-label">Confirm terminate</div>
                     <div class="sd-row-sub">Show a prompt before kicking</div>
                 </div>
@@ -491,7 +557,7 @@
     ───────────────────────────────────────── */
     const DEFAULTS = {
         darkMode:        false,
-        compact:         false,
+        cardSize:        3,
         showPlayers:     true,
         maxPlayers:      5,
         autoRefresh:     true,
@@ -501,6 +567,7 @@
         confirmPurge:    true,
         copyId:          true,
         sounds:          false,
+        notifs:          true,
     };
 
     let cfg = { ...DEFAULTS };
@@ -516,7 +583,8 @@
 
     function applyCfgToUI() {
         document.getElementById('s-darkmode').checked    = cfg.darkMode;
-        document.getElementById('s-compact').checked     = cfg.compact;
+        document.getElementById('s-cardsize').value      = cfg.cardSize;
+        document.getElementById('s-cardsize-val').textContent = cardSizeLabel(cfg.cardSize);
         document.getElementById('s-showplayers').checked = cfg.showPlayers;
         document.getElementById('s-maxplayers-val').textContent = cfg.maxPlayers;
         document.getElementById('s-autorefresh').checked = cfg.autoRefresh;
@@ -524,26 +592,15 @@
         document.getElementById('s-confirmpurge').checked = cfg.confirmPurge;
         document.getElementById('s-copyid').checked      = cfg.copyId;
         document.getElementById('s-sounds').checked      = cfg.sounds;
+        document.getElementById('s-notifs').checked      = cfg.notifs;
 
-        // Segment: interval
-        document.querySelectorAll('#seg-interval .seg-opt').forEach(b => {
-            b.classList.toggle('on', parseInt(b.textContent) * 1000 === cfg.refreshInterval ||
-                (b.textContent === '30s' && cfg.refreshInterval === 30000) ||
-                (b.textContent === '10s' && cfg.refreshInterval === 10000) ||
-                (b.textContent === '5s'  && cfg.refreshInterval === 5000)  ||
-                (b.textContent === '3s'  && cfg.refreshInterval === 3000));
-        });
-        // Simpler: just re-run setInterval_ to highlight correct btn
         _highlightInterval(cfg.refreshInterval);
-
-        // Time format
         document.getElementById('tf-12').classList.toggle('on', cfg.timeFormat === '12h');
         document.getElementById('tf-24').classList.toggle('on', cfg.timeFormat === '24h');
 
-        // Apply side-effects
         if (cfg.darkMode) document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');
-        document.getElementById('server-grid').classList.toggle('compact', cfg.compact);
+        applyCardSize(cfg.cardSize, true); // silent — no toast on load
     }
 
     /* ─────────────────────────────────────────
@@ -555,11 +612,18 @@
         save();
     }
 
-    function applyCompact(on) {
-        cfg.compact = on;
-        document.getElementById('server-grid').classList.toggle('compact', on);
+    const CARD_SIZES = [160, 210, 290, 380, 500];
+    const CARD_LABELS = ['XS','S','M','L','XL'];
+    function cardSizeLabel(v){ return CARD_LABELS[v-1] || 'M'; }
+
+    function applyCardSize(v, silent) {
+        cfg.cardSize = v;
+        const px = CARD_SIZES[v-1] || 290;
+        document.getElementById('server-grid').style.setProperty('--card-min', px+'px');
+        document.documentElement.style.setProperty('--card-min', px+'px');
+        document.getElementById('s-cardsize-val').textContent = cardSizeLabel(v);
         save();
-        refresh();
+        if (!silent) toast('Card size: ' + cardSizeLabel(v));
     }
 
     function applyShowPlayers(on) {
@@ -658,6 +722,56 @@
         el.classList.add('show');
         if (toastTimer) clearTimeout(toastTimer);
         toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    /* ─────────────────────────────────────────
+       NOTIFICATION BAR
+    ───────────────────────────────────────── */
+    let notifCounter = 0;
+    const notifTimers = {};
+
+    function pushNotif(type, serverId, isStudio) {
+        if (!cfg.notifs) return;
+        const bar = document.getElementById('notif-bar');
+        const id  = ++notifCounter;
+        const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        const shortId = serverId.substring(0,10) + '…';
+        const isConnect = type === 'connect';
+
+        const el = document.createElement('div');
+        el.className = 'notif ' + (isConnect ? 'notif-connect' : 'notif-disconnect');
+        el.id = 'notif-' + id;
+        el.innerHTML = `
+            <span class="notif-icon">${isConnect ? '▲' : '▽'}</span>
+            <span class="notif-text">
+                <b>${isConnect ? 'Server connected' : 'Server disconnected'}</b>
+                &nbsp;·&nbsp; ${isStudio ? 'Studio' : 'Live'} &nbsp;
+                <span style="font-family:var(--mono);font-size:10px;color:var(--ink4)">${shortId}</span>
+            </span>
+            <span class="notif-time">${now}</span>
+            <button class="notif-close" onclick="dismissNotif(${id})">✕</button>`;
+
+        bar.appendChild(el);
+        bar.classList.add('has-items');
+
+        // Auto-dismiss after 7s
+        notifTimers[id] = setTimeout(() => dismissNotif(id), 7000);
+    }
+
+    function dismissNotif(id) {
+        clearTimeout(notifTimers[id]);
+        delete notifTimers[id];
+        const el = document.getElementById('notif-' + id);
+        if (!el) return;
+        el.style.transition = 'opacity .2s, max-height .25s, padding .25s';
+        el.style.opacity = '0';
+        el.style.maxHeight = el.offsetHeight + 'px';
+        requestAnimationFrame(() => { el.style.maxHeight = '0'; el.style.padding = '0'; });
+        setTimeout(() => {
+            el.remove();
+            const bar = document.getElementById('notif-bar');
+            if (!bar.children.length) bar.classList.remove('has-items');
+        }, 270);
     }
 
     /* ─────────────────────────────────────────
@@ -806,10 +920,20 @@
         document.getElementById('p-count').textContent = servers.reduce((a,[,s]) => a+(s.playerCount||0), 0);
         document.getElementById('a-count').textContent = archives.length;
 
-        // Sound: detect new / dropped servers
+        // Detect new / dropped servers → notify + sound
         const currentIds = new Set(servers.map(([id]) => id));
-        currentIds.forEach(id => { if (!prevServerIds.has(id)) beep(660, 90); });
-        prevServerIds.forEach(id => { if (!currentIds.has(id)) beep(300, 120); });
+        currentIds.forEach(id => {
+            if (!prevServerIds.has(id)) {
+                beep(660, 90);
+                pushNotif('connect', id, masterData.servers[id]?.isStudio);
+            }
+        });
+        prevServerIds.forEach(id => {
+            if (!currentIds.has(id)) {
+                beep(300, 120);
+                pushNotif('disconnect', id, false);
+            }
+        });
         prevServerIds = currentIds;
 
         const grid = document.getElementById('server-grid');
